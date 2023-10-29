@@ -1,8 +1,8 @@
 package loom.entity;
 
-import food.FoodSectionType;
 import equilinox.VanillaComponent;
 import equilinox.classification.Classifiable;
+import food.FoodSectionType;
 
 import java.awt.*;
 import java.util.Map;
@@ -18,6 +18,7 @@ public interface Entity {
     String getClassification();
 
     boolean goesUnderwater();
+
     boolean goesOverwater();
 
     String[] getModelPaths();

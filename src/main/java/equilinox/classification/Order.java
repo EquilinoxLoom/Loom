@@ -4,43 +4,68 @@ package equilinox.classification;
  * NEVER USE FIELDS MARKED AS @DEPRECATED!!!
  */
 public enum Order implements Classifiable {
-    FOREST_TREE('f', Phylum.TREE),
-    GRASS_TREE('g', Phylum.TREE),
-    WOODLAND_TREE('w', Phylum.TREE),
-    LUSH_TREE('l', Phylum.TREE),
-    DESERT_TREE('d', Phylum.TREE),
-    SNOW_TREE('m', Phylum.TREE),
-    SWAMP_TREE('s', Phylum.TREE),
-    JUNGLE_TREE('j', Phylum.TREE),
-    TROPICAL_TREE('t', Phylum.TREE),
+    PLANT('p', HEAD),
+    ANIMAL('a', HEAD),
+    NON_LIVING('e', HEAD),
+    
+    TREE('t', PLANT),
+    BUSH('b', PLANT),
+    CACTUS('c', PLANT),
+    SMALL_PLANT('n', PLANT),
 
-    FRUIT_BUSH('f', Phylum.BUSH),
-    LEAFY_BUSH('l', Phylum.BUSH),
+    FISH('f', ANIMAL),
+    HERBIVORE('h', ANIMAL),
+    BIRD('b', ANIMAL),
+    CARNIVORE('c', ANIMAL),
+    INSECT('i', ANIMAL),
+    REPTILE('r', ANIMAL),
 
-    WATER_PLANT('w', Phylum.SMALL_PLANT),
-    GRASSES('g', Phylum.SMALL_PLANT),
-    ROOT_VEGETABLE('v', Phylum.SMALL_PLANT),
-    FERN('x', Phylum.SMALL_PLANT),
-    FLOWER('f', Phylum.SMALL_PLANT),
-    HERB('h', Phylum.SMALL_PLANT),
-    MUSHROOM('m', Phylum.SMALL_PLANT),
+    ROCK('r', NON_LIVING),
+    OTHER('o', NON_LIVING),
+    CLOUD('c', NON_LIVING),
+    FRUIT('f', NON_LIVING),
+    VEGETABLE('v', NON_LIVING),
+    NUT('n', NON_LIVING),
+    MEAT('m', NON_LIVING),
+    STRUCTURE('s', NON_LIVING),
+    
+    FOREST_TREE('f', TREE),
+    GRASS_TREE('g', TREE),
+    WOODLAND_TREE('w', TREE),
+    LUSH_TREE('l', TREE),
+    DESERT_TREE('d', TREE),
+    SNOW_TREE('m', TREE),
+    SWAMP_TREE('s', TREE),
+    JUNGLE_TREE('j', TREE),
+    TROPICAL_TREE('t', TREE),
 
-    SMALL_FISH('s', Phylum.FISH),
-    BIG_FISH('b', Phylum.FISH),
-    WEIRD_FISH('w', Phylum.FISH),
+    FRUIT_BUSH('f', BUSH),
+    LEAFY_BUSH('l', BUSH),
 
-    LARGE_HERBIVORE('l', Phylum.HERBIVORE),
-    MEDIUM_HERBIVORE('m', Phylum.HERBIVORE),
-    SMALL_HERBIVORE('s', Phylum.HERBIVORE),
+    WATER_PLANT('w', SMALL_PLANT),
+    GRASSES('g', SMALL_PLANT),
+    ROOT_VEGETABLE('v', SMALL_PLANT),
+    FERN('x', SMALL_PLANT),
+    FLOWER('f', SMALL_PLANT),
+    HERB('h', SMALL_PLANT),
+    MUSHROOM('m', SMALL_PLANT),
 
-    SMALL_BIRD('s', Phylum.BIRD),
-    BIRD_OF_PREY('p', Phylum.BIRD),
+    SMALL_FISH('s', FISH),
+    BIG_FISH('b', FISH),
+    WEIRD_FISH('w', FISH),
 
-    SMALL_CARNIVORE('s', Phylum.CARNIVORE),
-    LARGE_CARNIVORE('l', Phylum.CARNIVORE),
+    LARGE_HERBIVORE('l', HERBIVORE),
+    MEDIUM_HERBIVORE('m', HERBIVORE),
+    SMALL_HERBIVORE('s', HERBIVORE),
 
-    STONE('s', Phylum.ROCK),
-    LARGE_ROCK('l', Phylum.ROCK),
+    SMALL_BIRD('s', BIRD),
+    BIRD_OF_PREY('p', BIRD),
+
+    SMALL_CARNIVORE('s', CARNIVORE),
+    LARGE_CARNIVORE('l', CARNIVORE),
+
+    STONE('s', ROCK),
+    LARGE_ROCK('l', ROCK),
 
     @Deprecated LARGE_REPTILE('r', SMALL_HERBIVORE);
 
@@ -53,7 +78,7 @@ public enum Order implements Classifiable {
     }
 
     @Override
-    public Classifiable getParent() {
+    public Classifiable getLineage() {
         return parent;
     }
 

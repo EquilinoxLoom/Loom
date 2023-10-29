@@ -139,7 +139,8 @@ public class EntityLoader {
                     blueprint.append(String.format(Locale.US, "%.4f", normal.get(i).get(faces1 * 3))).append(";");
                     blueprint.append(String.format(Locale.US, "%.4f", normal.get(i).get(faces1 * 3 + 1))).append(";");
                     blueprint.append(String.format(Locale.US, "%.4f", normal.get(i).get(faces1 * 3 + 2)));
-                    if (j + 1 < faces.get(i).size() && !faces.get(i).get(j + 1).contains("POINTER")) blueprint.append(";");
+                    if (j + 1 < faces.get(i).size() && !faces.get(i).get(j + 1).contains("POINTER"))
+                        blueprint.append(";");
                 }
 
                 if (faces.get(i).get(j).contains("POINTER")) {
@@ -147,7 +148,8 @@ public class EntityLoader {
                     blueprint.append(colour.get(i).get(point * 3).toString()).append(";");
                     blueprint.append(colour.get(i).get(point * 3 + 1).toString()).append(";");
                     blueprint.append(colour.get(i).get(point * 3 + 2).toString()).append("\n");
-                    point--; k++;
+                    point--;
+                    k++;
                 }
             }
             blueprint.append("\n");

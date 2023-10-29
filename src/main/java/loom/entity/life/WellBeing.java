@@ -1,10 +1,10 @@
 package loom.entity.life;
 
 import com.sun.istack.internal.NotNull;
+import equilinox.classification.Classifiable;
 import loom.IEnvironment;
 import loom.entity.weaver.EntityComponent;
 import loom.entity.weaver.Printable;
-import equilinox.classification.Classifiable;
 
 @SuppressWarnings("unused")
 public class WellBeing extends EntityComponent {
@@ -22,10 +22,10 @@ public class WellBeing extends EntityComponent {
      * @param growsInBarren Whether the entity accepts being at barren land.
      *                      <STRONG>{@code True}</STRONG> for all grasses.
      */
-    public WellBeing addSuitableBiomeFactor(float influence, boolean growsInBarren, float idealPercentage, 
-                                       @NotNull IEnvironment... biomes) {
+    public WellBeing addSuitableBiomeFactor(float influence, boolean growsInBarren, float idealPercentage,
+                                            @NotNull IEnvironment... biomes) {
         add(2, growsInBarren, biomes.length == 0 ? "0" : Printable.printArray(";", biomes,
-                        biome -> String.valueOf(biome.getId())), idealPercentage, influence);
+                biome -> String.valueOf(biome.getId())), idealPercentage, influence);
         return this;
     }
 

@@ -2,18 +2,23 @@ package loom.entity.plant;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
-import loom.entity.life.LivingEntity;
+import equilinox.VanillaComponent;
+import equilinox.classification.Specie;
+import food.FoodSectionType;
 import loom.entity.life.Death;
 import loom.entity.life.Evolution;
+import loom.entity.life.LivingEntity;
 import loom.entity.life.WellBeing;
-import food.FoodSectionType;
 import loom.entity.other.Particle;
 import loom.entity.weaver.Printable;
-import snowball.embroider.entity.life.*;
-import equilinox.VanillaComponent;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.Arrays;
+import java.util.Vector;
 import java.util.stream.Collectors;
+
+import static equilinox.VanillaComponent.FRUIT_FALL;
+import static equilinox.VanillaComponent.PERCH;
 
 @SuppressWarnings("unused")
 public abstract class PlantEntity extends LivingEntity {
@@ -40,5 +45,14 @@ public abstract class PlantEntity extends LivingEntity {
 
     public void setBlooms() {
         this.components.put(VanillaComponent.BLOOM, "");
+    }
+
+    public void setPerchingPositions(Vector3f[] positions) {
+        if (positions != null && positions.length > 0) {
+            StringBuilder builder = new StringBuilder(";" + positions.length + ";");
+            for (Vector3f vector : positions) builder.append(";").append(vector.x).append(";").append(vector.y)
+                    .append(";").append(vector.z);
+            components.put(PERCH, builder.toString());
+        }
     }
 }

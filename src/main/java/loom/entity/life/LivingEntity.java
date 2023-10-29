@@ -3,7 +3,6 @@ package loom.entity.life;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import loom.entity.LoomEntity;
-import snowball.embroider.entity.life.*;
 
 public abstract class LivingEntity extends LoomEntity implements Tooltip, Living {
     public final Evolution evolution;

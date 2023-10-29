@@ -21,7 +21,7 @@ public interface Printable {
 
     static String print(String joiner, Object... os) {
         return Arrays.stream(os).filter(Objects::nonNull).map(o -> {
-            if (o instanceof Boolean) return ((boolean)o) ? "1" : "0";
+            if (o instanceof Boolean) return ((boolean) o) ? "1" : "0";
             return String.valueOf(o);
         }).collect(Collectors.joining(joiner));
     }

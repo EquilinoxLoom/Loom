@@ -65,7 +65,8 @@ public class MixinFoodCompLoader {
                     sections[i] = whole.newInstance(name, foodPoints, null);
                 }
             }
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         return sections;

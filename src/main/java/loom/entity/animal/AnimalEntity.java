@@ -2,18 +2,20 @@ package loom.entity.animal;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
-import loom.entity.life.LivingEntity;
-import loom.entity.weaver.Printable;
-import loom.entity.life.Death;
-import loom.entity.life.Evolution;
-import loom.entity.life.WellBeing;
-import snowball.embroider.entity.life.*;
 import equilinox.VanillaComponent;
 import equilinox.classification.Classifiable;
 import equilinox.classification.Specie;
+import loom.entity.Entity;
+import loom.entity.life.Death;
+import loom.entity.life.Evolution;
+import loom.entity.life.LivingEntity;
+import loom.entity.life.WellBeing;
+import loom.entity.weaver.Printable;
 
 @SuppressWarnings("unused")
 public abstract class AnimalEntity extends LivingEntity {
+    protected final int id;
+
     public AnimalEntity(String name, int id,
                         @NotNull Movement movement,
                         @Nullable Evolution evolution,
@@ -22,6 +24,7 @@ public abstract class AnimalEntity extends LivingEntity {
         this.components.put(VanillaComponent.MOVEMENT, movement.build());
         this.components.put(VanillaComponent.AI, goesOverwater() ? (goesUnderwater() ? "PATROL_WITH_SWIM" : "PATROL")
                 : "SWIM");
+        this.id = id;
     }
 
     public abstract boolean hasEggStage();
@@ -30,7 +33,9 @@ public abstract class AnimalEntity extends LivingEntity {
         return true;
     }
 
-    /**Standard values are: min = 5; max = 10*/
+    /**
+     * Standard values are: min = 5; max = 10
+     */
     public void setPatrolAI(float minIdleTime, float maxIdleTime) {
         this.components.put(VanillaComponent.AI, Printable.print(";;", "PATROL"
                 + (goesUnderwater() ? "_WITH_SWIM" : ""), minIdleTime, maxIdleTime));
@@ -74,6 +79,11 @@ public abstract class AnimalEntity extends LivingEntity {
         components.put(VanillaComponent.FLEE, ";" + Printable.print(";;", range, goesOverwater(), goesUnderwater()));
     }
 
+    /**Guinea pigs panic*/
+    public void setPanic(float range) {
+        components.put(VanillaComponent.PANIC, "");
+    }
+
     public void setHides(float range, Classifiable hidingSpot) {
         components.put(VanillaComponent.FLEE, ";" + Printable.print(";;", range, goesOverwater(), goesUnderwater(),
                 hidingSpot.getClassification()));
@@ -85,6 +95,7 @@ public abstract class AnimalEntity extends LivingEntity {
 
     public void setHoleHides(float range) {
         components.put(VanillaComponent.FLEE, "MEERKAT;" + range);
+        components.put(VanillaComponent.BURROW, "");
     }
 
     public void setDrops(Specie item) {
@@ -93,5 +104,23 @@ public abstract class AnimalEntity extends LivingEntity {
 
     public void setDiet(Diet diet) {
         components.put(VanillaComponent.EATING, diet.build());
+    }
+
+    /**
+     * For flying birds it's a nest, for beavers a den.
+     * @param siteStage least stage the site must be to support breeding.
+     */
+    public void setBreedSite(Specie site, int siteStage, boolean decreasesSiteStage) {
+        components.put(VanillaComponent.NESTING, ";" + Printable.print(";;", site.getClassification(),
+                siteStage, decreasesSiteStage));
+    }
+
+    /**Params are the spit positions*/
+    public void setSpits(float x, float y, float z) {
+        components.put(VanillaComponent.SPITTING, ";" + x + ";" + y + ";" + z);
+    }
+
+    public void setInsectCatcher(float minCooldown, float maxCooldown) {
+        components.put(VanillaComponent.FLINGING, ";" + minCooldown + ";;" + maxCooldown);
     }
 }

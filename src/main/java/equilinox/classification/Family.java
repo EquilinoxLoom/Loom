@@ -1,13 +1,12 @@
 package equilinox.classification;
 
 import static equilinox.classification.Order.*;
-import static equilinox.classification.Phylum.*;
 
 /**
  * NEVER USE FIELDS MARKED AS @DEPRECATED!!!
  */
 @SuppressWarnings("unused")
-public enum Family implements Classifiable, Specie {
+public enum Family implements Specie {
     TEST(HEAD),
     SHEEP(MEDIUM_HERBIVORE),
     OAK_TREE(WOODLAND_TREE),
@@ -26,10 +25,10 @@ public enum Family implements Classifiable, Specie {
     RED_FISH(SMALL_FISH),
     WATER_LILY(WATER_PLANT),
     SEAWEED(WATER_PLANT),
-    CACTUS(Phylum.CACTUS),
-    PRICKLY_PEAR(Phylum.CACTUS),
+    CACTUS(Order.CACTUS),
+    PRICKLY_PEAR(CACTUS),
     GRASS_TUFT(GRASSES),
-    YUCCA(Phylum.CACTUS),
+    YUCCA(CACTUS),
     @Deprecated DESERT_ROCK_STRUCTURE(LARGE_ROCK),
     PIKE(BIG_FISH),
     @Deprecated TEST_FIR_TREE(TREE),
@@ -112,7 +111,7 @@ public enum Family implements Classifiable, Specie {
     BARK(OTHER),
     BEAVER_LODGE(STRUCTURE),
     SNAP_DRAGON(FLOWER),
-    MEAT(Phylum.MEAT),
+    MEAT(Order.MEAT),
     WILD_MINT(HERB),
     SAGE(HERB),
     OREGANO(HERB),
@@ -128,8 +127,8 @@ public enum Family implements Classifiable, Specie {
     TROPICAL_FLOWER(FLOWER),
     BLUEBELL(FLOWER),
     BUTTON_MUSHROOM(MUSHROOM),
-    SMALL_CACTUS(Phylum.CACTUS),
-    GIANT_CACTUS(Phylum.CACTUS),
+    SMALL_CACTUS(CACTUS),
+    GIANT_CACTUS(CACTUS),
     DESERT_TREE(Order.DESERT_TREE),
     JUNGLE_GRASS(GRASSES),
     FICUS_TREE(JUNGLE_TREE),
@@ -146,9 +145,9 @@ public enum Family implements Classifiable, Specie {
     RED_MAPLE_TREE(GRASS_TREE),
     TROPICAL_SEAWEED(WATER_PLANT),
     NUT_TREE(WOODLAND_TREE),
-    NUT(Phylum.NUT),
-    BIRD_MEAT(Phylum.MEAT),
-    SMALL_MEAT(Phylum.MEAT),
+    NUT(Order.NUT),
+    BIRD_MEAT(MEAT),
+    SMALL_MEAT(MEAT),
     MANGO(FRUIT),
     TURNIP(ROOT_VEGETABLE),
     BULRUSH(WATER_PLANT),
@@ -201,7 +200,7 @@ public enum Family implements Classifiable, Specie {
         }
 
         @Override
-        public Classifiable getParent() {
+        public Classifiable getLineage() {
             return CLOUD;
         }
 
@@ -223,7 +222,7 @@ public enum Family implements Classifiable, Specie {
     }
 
     @Override
-    public Classifiable getParent() {
+    public Classifiable getLineage() {
         return superOrder;
     }
 

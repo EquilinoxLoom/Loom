@@ -1,11 +1,12 @@
 package loom.entity.plant;
 
-import equilinox.classification.Specie;
-
 public interface FruitProducer {
-    Specie fruit();
+    /**
+     * If the entity has 5 models and at the last two it wields fruits, model index must be 3 and stages must be 2.
+     */
+    int modelIndex();
 
-    int count();
+    int stages();
 
     default float time() {
         return 5;

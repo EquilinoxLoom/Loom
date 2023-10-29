@@ -15,7 +15,8 @@ import static loom.Loom.MOD_POINTER;
 
 @Mixin(value = MyFile.class, remap = false)
 public class MixinMyFile {
-    @Shadow private String path;
+    @Shadow
+    private String path;
 
     /**
      * @author Sandaliaball

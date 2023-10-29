@@ -1,5 +1,5 @@
 package equilinox.classification;
 
-public interface Specie {
+public interface Specie extends Classifiable {
     int getId();
 }

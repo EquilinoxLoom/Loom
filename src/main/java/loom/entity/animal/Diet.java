@@ -1,10 +1,10 @@
 package loom.entity.animal;
 
-import loom.entity.weaver.EntityComponent;
-import loom.entity.weaver.Printable;
+import equilinox.classification.Classifiable;
 import food.FoodSectionType;
 import loom.entity.Entity;
-import equilinox.classification.Classifiable;
+import loom.entity.weaver.EntityComponent;
+import loom.entity.weaver.Printable;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -75,11 +75,11 @@ public class Diet extends EntityComponent {
      *     </dd>
      * </dl>
      */
-     public Diet addDietOption(Classifiable edible, FoodSectionType type, Animation animation) {
-         animations.add(animation);
-         add(edible.getClassification() + ";" + type.name() + ";" + new ArrayList<>(animations).indexOf(animation));
-         return this;
+    public Diet addDietOption(Classifiable edible, FoodSectionType type, Animation animation) {
+        animations.add(animation);
+        add(edible.getClassification() + ";" + type.name() + ";" + new ArrayList<>(animations).indexOf(animation));
+        return this;
     }
 
-    public enum Animation { SIMPLE, THROWING, DIGGING, DIVING, INSTANT }
+    public enum Animation {SIMPLE, THROWING, DIGGING, DIVING, INSTANT}
 }

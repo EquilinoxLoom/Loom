@@ -67,7 +67,9 @@ public class Particle extends EntityComponent {
      */
     public Particle setDirection(float xDir, float yDir, float zDir, float standardDeviation) {
         this.direction = true;
-        this.x1 = xDir; this.y1 = yDir; this.z1 = zDir;
+        this.x1 = xDir;
+        this.y1 = yDir;
+        this.z1 = zDir;
         this.dirDev = standardDeviation;
         return this;
     }
@@ -124,12 +126,16 @@ public class Particle extends EntityComponent {
         return new SpawnPattern("1;" + radius);
     }
 
-    /** x, y and z of the direction of the line */
+    /**
+     * x, y and z of the direction of the line
+     */
     public static SpawnPattern newLine(float length, float x, float y, float z) {
         return new SpawnPattern("2;" + length + ";" + x + ";" + y + ";" + z);
     }
 
-    /** x, y and z of the normals of the circle */
+    /**
+     * x, y and z of the normals of the circle
+     */
     public static SpawnPattern newCircle(float radius, float x, float y, float z) {
         return new SpawnPattern("3;" + radius + ";" + x + ";" + y + ";" + z);
     }

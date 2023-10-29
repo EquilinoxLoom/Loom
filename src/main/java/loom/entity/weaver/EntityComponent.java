@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntityComponent implements Printable {
-    protected EntityComponent() {}
+    protected EntityComponent() {
+    }
 
     private final List<String> print = new ArrayList<>();
 

@@ -40,7 +40,8 @@ public class MixinInformationComponentLoader {
         return blueprint;
     }
 
-    @Unique private static void embroider$setField(Object o, String field, Object set)
+    @Unique
+    private static void embroider$setField(Object o, String field, Object set)
             throws NoSuchFieldException, IllegalAccessException {
         Field readerField = o.getClass().getDeclaredField(field);
         readerField.setAccessible(true);

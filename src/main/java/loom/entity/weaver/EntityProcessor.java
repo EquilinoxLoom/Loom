@@ -1,18 +1,15 @@
 package loom.entity.weaver;
-import loom.entity.life.LivingEntity;
-import loom.entity.animal.Fighter;
-import loom.entity.animal.Holder;
-import loom.entity.animal.Predator;
-import loom.entity.life.BiomeSpreader;
-import loom.entity.life.Tooltip;
-import loom.Util;
-import loom.entity.Entity;
-import loom.entity.other.Flytrap;
-import loom.entity.other.Named;
-import loom.entity.other.Projectile;
-import loom.entity.other.Timeout;
+
 import equilinox.VanillaComponent;
 import equilinox.classification.Classifiable;
+import equilinox.classification.Family;
+import loom.Util;
+import loom.entity.Entity;
+import loom.entity.animal.*;
+import loom.entity.life.BiomeSpreader;
+import loom.entity.life.LivingEntity;
+import loom.entity.life.Tooltip;
+import loom.entity.other.*;
 import loom.entity.plant.FruitProducer;
 
 import java.awt.*;
@@ -43,7 +40,6 @@ public final class EntityProcessor implements Printable {
         buildHeader();
 
 
-
         buildFooter();
         return join(header) + "\n" + join(body) + "\n" + String.join("\n", footer);
     }
@@ -63,7 +59,7 @@ public final class EntityProcessor implements Printable {
     @Override
     public String joined(Object... os) {
         return Arrays.stream(os).filter(Objects::nonNull).map(o -> {
-            if (o instanceof Boolean) return ((boolean)o) ? "1" : "0";
+            if (o instanceof Boolean) return ((boolean) o) ? "1" : "0";
             return String.valueOf(o);
         }).collect(Collectors.joining(joiner()));
     }
@@ -87,17 +83,17 @@ public final class EntityProcessor implements Printable {
 
     public void buildFooter() {
         if (entity instanceof BiomeSpreader) {
-            BiomeSpreader spreader = (BiomeSpreader)entity;
+            BiomeSpreader spreader = (BiomeSpreader) entity;
             components.put(SPREADER, spreader.biome() + ";0.1;0.1;0.1;" + spreader.strength() + ";"
                     + spreader.distance());
         }
         byAnnotation(PROJECTILE, Projectile.class);
         if (entity.getClass().isAnnotationPresent(Timeout.class))
             components.put(TIME_OUT, String.valueOf(entity.getClass().getAnnotation(Timeout.class).value()));
-        byAnnotation(FLY_TRAP, Flytrap.class);
         if (!entity.getMaterials().isEmpty()) {
             Map<Color, Integer> map = new LinkedHashMap<>();
-            int i = 0; for (Map.Entry<Color, Integer> entry : entity.getMaterials().entrySet()) {
+            int i = 0;
+            for (Map.Entry<Color, Integer> entry : entity.getMaterials().entrySet()) {
                 if (i == 1 && entity.getSecondNaturalColor() != null) {
                     map.put(entity.getSecondNaturalColor(), entity.getMaterials().values().iterator().next());
                 }
@@ -135,26 +131,51 @@ public final class EntityProcessor implements Printable {
             if (!life.dynamic()) print2.addSub(life.subStages());
             components.put(GROWTH, print2.build());
         }
+        byAnnotation(FLY_TRAP, Flytrap.class);
         if (entity instanceof FruitProducer) {
             FruitProducer fruit = (FruitProducer) entity;
-            components.put(FRUITER, ";" + fruit.fruit().getId() + ";;" + fruit.count()
+            components.put(FRUITER, ";" + fruit.modelIndex() + ";;" + fruit.stages()
                     + (fruit.time() != 5 ? ";;" + fruit.time() : ""));
+        }
+        byAnnotation(LILY, Floater.class);
+        byAnnotation(SUN_FACER, Sunflower.class);
+        if (entity instanceof Builder) {
+            Builder builder = (Builder) entity;
+            components.put(BUILDER, ";" + Printable.print(";;", builder.structure().getId(), builder.points(),
+                    builder.structure() instanceof Entity
+                            ? ((Entity) builder.structure()).hasComponent(PERCHER)
+                            : builder.structure().getId() == Family.NEST.getId(),
+                    builder.buildTime(), (builder.age() - 1) / ((LivingEntity) entity).stages()) +
+                    (builder.buildingHour() != 0 ? ";;" + builder.buildTime() : ""));
         }
         if (entity.hasComponent(FOOD)) components.put(FOOD, Printable.printArray(";", entity.getFoodInfo().values()
                 .toArray(new String[0]), s -> s));
-        if (entity instanceof Predator) {
-            Predator predator = (Predator)entity;
-            components.put(HUNT, ";" + Printable.print(";;", predator.range(),
-                    Printable.printArray(";;", predator.preys(), Classifiable::getClassification),
-                    predator.huntsYoung(), predator.huntsOld()));
-        }
+        byAnnotation(STINGING, Stinger.class);
+        byAnnotation(CHARGE, TreeCharger.class);
+        byAnnotation(PEACOCK, Peacock.class);
         if (entity instanceof Holder) components.put(EQUIP, ";" + Printable.printArray(";;",
-                ((Holder)entity).positions(), v -> v.x + ";" + v.y + ";" + v.z));
+                ((Holder) entity).positions(), v -> v.x + ";" + v.y + ";" + v.z));
         byAnnotation(NAME, Named.class);
+        byAnnotation(BEAVER, DenBuilder.class);
         if (entity instanceof Fighter) {
-            Fighter fighter = (Fighter)entity;
+            Fighter fighter = (Fighter) entity;
             components.put(FIGHT, ";" + Printable.print(";;", fighter.attackDamage(), fighter.takesRevenge(),
                     entity.hasComponent(BEE), fighter.attackRange(), fighter.attackCooldown()));
+            if (entity instanceof Territorial) {
+                Territorial territorial = (Territorial) fighter;
+                components.put(HOSTILE, ";" + territorial.defendCooldown() + ";;" + territorial.enemy() + ";;"
+                        + (territorial.noticeable() ? 1 : 0));
+            }
+        }
+        if (entity instanceof Predator) {
+            Predator predator = (Predator) entity;
+            if (entity.goesUnderwater()) components.put(FISH_HUNT, "");
+            if (entity.goesOverwater()) {
+                if (entity.hasEggStage()) components.put(BIRD_HUNT, "");
+                else components.put(HUNT, ";" + Printable.print(";;", predator.range(),
+                        Printable.printArray(";;", predator.preys(), Classifiable::getClassification),
+                        predator.huntsYoung(), predator.huntsOld()));
+            }
         }
         components.entrySet().stream().filter(e -> e.getValue() != null).filter(e -> e.getKey().check(entity))
                 .forEach(e -> addFooter(e.getKey().name() + (e.getValue().isEmpty() ? "" : ";" + e.getValue())));

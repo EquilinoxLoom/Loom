@@ -1,10 +1,10 @@
 package loom.entity.life;
 
 import com.sun.istack.internal.NotNull;
-import loom.entity.weaver.EntityComponent;
-import loom.Util;
 import equilinox.classification.Classifiable;
 import equilinox.classification.Specie;
+import loom.Util;
+import loom.entity.weaver.EntityComponent;
 
 import java.awt.*;
 

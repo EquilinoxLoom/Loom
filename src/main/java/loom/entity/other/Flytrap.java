@@ -1,3 +1,4 @@
 package loom.entity.other;
 
-public @interface Flytrap {}
+public @interface Flytrap {
+}

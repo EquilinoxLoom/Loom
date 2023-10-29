@@ -8,5 +8,6 @@ public interface Predator extends Fighter {
     Classifiable[] preys();
 
     boolean huntsYoung();
+
     boolean huntsOld();
 }

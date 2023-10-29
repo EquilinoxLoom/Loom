@@ -1,9 +1,9 @@
 package loom.entity;
 
-import loom.entity.animal.Builder;
-import loom.entity.life.Tooltip;
 import equilinox.VanillaComponent;
 import equilinox.classification.Specie;
+import loom.entity.animal.Builder;
+import loom.entity.life.Tooltip;
 
 public abstract class StructureEntity extends LoomEntity implements Tooltip {
     private final int stages;

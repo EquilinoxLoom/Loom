@@ -1,14 +1,14 @@
 package loom.entity;
 
 import com.sun.istack.internal.NotNull;
+import equilinox.VanillaComponent;
+import equilinox.classification.Specie;
+import food.FoodSectionType;
 import loom.CustomComponent;
 import loom.entity.life.Death;
-import food.FoodSectionType;
 import loom.entity.other.Particle;
 import loom.entity.weaver.EntityProcessor;
 import loom.entity.weaver.Printable;
-import equilinox.VanillaComponent;
-import equilinox.classification.Specie;
 
 import java.awt.*;
 import java.util.List;
@@ -39,6 +39,11 @@ public abstract class LoomEntity implements Specie, Entity {
     @Override
     public final int getId() {
         return id;
+    }
+
+    @Override
+    public final String getNode() {
+        return String.valueOf(id);
     }
 
     public Entity addCustomComponent(CustomComponent component) {
@@ -91,6 +96,7 @@ public abstract class LoomEntity implements Specie, Entity {
     }
 
     protected final Map<FoodSectionType, String> foodInfo = new HashMap<>();
+
     public Map<FoodSectionType, String> getFoodInfo() {
         return foodInfo;
     }
@@ -136,5 +142,12 @@ public abstract class LoomEntity implements Specie, Entity {
         processor.buildFooter();
         processor.buildFooter();
         return processor.build();
+    }
+
+    /**
+     * Whether the entity dies when the perch slot is removed.
+     */
+    public void setPerches(boolean perchLink) {
+        this.components.put(VanillaComponent.PERCHER, perchLink ? ";1" : ";0");
     }
 }

@@ -1,7 +1,7 @@
 package loom.entity;
 
-import loom.entity.life.Tooltip;
 import equilinox.VanillaComponent;
+import loom.entity.life.Tooltip;
 import loom.entity.other.Particle;
 
 public abstract class FoodEntity extends LoomEntity {
@@ -12,7 +12,9 @@ public abstract class FoodEntity extends LoomEntity {
                 String.valueOf(decayingTime));
     }
 
-    /**Particle spawned when it's eaten*/
+    /**
+     * Particle spawned when it's eaten
+     */
     void setDiseaseHealer(Particle particle) {
         this.components.put(VanillaComponent.HEALER, ";PARTICLE_DEATH;;" + particle.toString());
     }

@@ -6,5 +6,6 @@ public interface Fighter {
     boolean takesRevenge();
 
     float attackRange();
+
     float attackCooldown();
 }

@@ -2,6 +2,7 @@ package loom.entity.life;
 
 public interface Living {
     float population();
+
     float lifespan();
 
     /**
@@ -15,6 +16,7 @@ public interface Living {
     }
 
     float breedingMaturity();
+
     float breedingCooldown();
 
     /**

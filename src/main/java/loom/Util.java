@@ -45,6 +45,7 @@ public class Util {
         NEON_PINK(new Color(255, 102, 235));
 
         public final Color color;
+
         VanillaColors(Color color) {
             this.color = color;
         }

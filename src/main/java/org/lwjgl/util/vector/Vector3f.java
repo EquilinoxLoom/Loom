@@ -117,7 +117,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
             dls = 1.0F;
         }
 
-        return (float)Math.acos((double)dls);
+        return (float) Math.acos((double) dls);
     }
 
     public Vector load(FloatBuffer buf) {
@@ -185,7 +185,7 @@ public class Vector3f extends Vector implements Serializable, ReadableVector3f, 
         } else if (this.getClass() != obj.getClass()) {
             return false;
         } else {
-            Vector3f other = (Vector3f)obj;
+            Vector3f other = (Vector3f) obj;
             return this.x == other.x && this.y == other.y && this.z == other.z;
         }
     }

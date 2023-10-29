@@ -3,7 +3,7 @@ package equilinox.classification;
 public interface Classifiable {
     Classifiable HEAD = new Classifiable() {
         @Override
-        public Classifiable getParent() {
+        public Classifiable getLineage() {
             return this;
         }
 
@@ -13,12 +13,12 @@ public interface Classifiable {
         }
     };
 
-    Classifiable getParent();
+    Classifiable getLineage();
 
     String getNode();
 
     default String getClassification() {
         if (this == HEAD) return "";
-        return getParent().getClassification() + getNode();
+        return getLineage().getClassification() + getNode();
     }
 }

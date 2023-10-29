@@ -7,9 +7,9 @@ public class Movement extends EntityComponent {
     public Movement(Object... os) {
         add(os);
     }
-    
+
     private static Movement regularMovement(int id, float speed, float xRotation, float minRotation, float maxRotation,
-                                 float rotationSpeed, Object... args) {
+                                            float rotationSpeed, Object... args) {
         return new Movement(id, speed, xRotation, minRotation, maxRotation, rotationSpeed, args);
     }
 
@@ -26,24 +26,24 @@ public class Movement extends EntityComponent {
     }
 
     public static Movement newRegularMovement(float speed, float xRotation, float minRotation, float maxRotation,
-                                   float rotationSpeed) {
+                                              float rotationSpeed) {
         return regularMovement(9, speed, xRotation, minRotation, maxRotation, rotationSpeed);
     }
 
     public static Movement newAmphibiousMovement(float speed, float xRotation, float minRotation, float maxRotation,
-                                      float rotationSpeed, float swimmingHeight) {
+                                                 float rotationSpeed, float swimmingHeight) {
         return regularMovement(9, speed, xRotation, minRotation, maxRotation, rotationSpeed, swimmingHeight);
     }
 
     public static Movement newAmphibiousMovement(float speed, float xRotation, float minRotation, float maxRotation,
-                                      float rotationSpeed, float swimmingHeight, boolean hasEggStage, float swimmingMultiplier) {
+                                                 float rotationSpeed, float swimmingHeight, boolean hasEggStage, float swimmingMultiplier) {
         return regularMovement(9, speed, xRotation, minRotation, maxRotation, rotationSpeed, swimmingHeight,
                 hasEggStage ? 1 : 0, swimmingMultiplier);
     }
 
     public static Movement newAmphibiousMovement(float speed, float xRotation, float minRotation, float maxRotation,
-                                      float rotationSpeed, float swimmingHeight, boolean hasEggStage,
-                                      float swimmingMultiplier, float agilityMultiplier) {
+                                                 float rotationSpeed, float swimmingHeight, boolean hasEggStage,
+                                                 float swimmingMultiplier, float agilityMultiplier) {
         return regularMovement(9, speed, xRotation, minRotation, maxRotation, rotationSpeed, swimmingHeight,
                 hasEggStage ? 1 : 0, swimmingMultiplier, agilityMultiplier);
     }
@@ -60,7 +60,9 @@ public class Movement extends EntityComponent {
         return new Movement(12);
     }
 
-    /**Base gliding velocity is 0.6*/
+    /**
+     * Base gliding velocity is 0.6
+     */
     public static Movement newAerialMovement(float glideVelocity) {
         return new Movement(12, -glideVelocity);
     }
@@ -82,7 +84,7 @@ public class Movement extends EntityComponent {
     }
 
     public static Movement newDolphinMovement(int id, float speed, float xRotation, float minRotation, float maxRotation,
-                                   float rotationSpeed) {
+                                              float rotationSpeed) {
         return regularMovement(45, speed, xRotation, minRotation, maxRotation, rotationSpeed);
     }
 }

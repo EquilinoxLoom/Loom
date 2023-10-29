@@ -1,9 +1,9 @@
 package loom.entity.life;
 
+import equilinox.classification.Specie;
 import loom.entity.other.Particle;
 import loom.entity.weaver.EntityComponent;
 import loom.entity.weaver.Printable;
-import equilinox.classification.Specie;
 
 @SuppressWarnings("unused")
 public class Death extends EntityComponent {
@@ -32,7 +32,7 @@ public class Death extends EntityComponent {
     }
 
     public static Death newFallDeathWithParticles(float timeToFall, float timeToFade, int angle, float timeToExplode,
-                                             boolean usesEntityColor, Particle particle, int[] stages) {
+                                                  boolean usesEntityColor, Particle particle, int[] stages) {
         return new Death("FALL", timeToFall, timeToFade, angle, 1, timeToExplode, usesEntityColor,
                 particle.build().replace(";PARTICLE_DEATH;;", ""), Printable.printArray(";", stages, String::valueOf));
     }
