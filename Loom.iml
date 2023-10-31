@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="minecraft" name="Minecraft">
+      <configuration>
+        <autoDetectTypes>
+          <platformType>MIXIN</platformType>
+        </autoDetectTypes>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/.mixin.out" />
+      <excludeFolder url="file://$MODULE_DIR$/Equilinox_0_Saves" />
+      <excludeFolder url="file://$MODULE_DIR$/EquilinoxErrorLogs" />
+      <excludeFolder url="file://$MODULE_DIR$/libs" />
+      <excludeFolder url="file://$MODULE_DIR$/logs" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="EquilinoxWindows" level="project" />
+    <orderEntry type="module" module-name="equilinox-mod-loader" />
+    <orderEntry type="module" module-name="equilinox-mod-kit" />
+    <orderEntry type="library" name="mixin-0.8" level="project" />
+    <orderEntry type="library" name="asm-all-5.2" level="project" />
+  </component>
+</module>
