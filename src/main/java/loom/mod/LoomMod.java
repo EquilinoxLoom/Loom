@@ -2,7 +2,7 @@ package loom.mod;
 
 import equilinoxmodkit.mod.EquilinoxMod;
 import equilinoxmodkit.mod.Initializer;
-import loom.component.LoomComponent;
+import loom.component.ComponentReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public abstract class LoomMod extends EquilinoxMod {
 
     static final List<LoomMod> LOOMS = new ArrayList<>();
 
-    final List<LoomComponent> COMPONENTS = new ArrayList<>();
+    final List<ComponentReference> COMPONENTS = new ArrayList<>();
 
     public LoomMod() {
         LoomMod.LOOMS.add(this);
@@ -27,7 +27,7 @@ public abstract class LoomMod extends EquilinoxMod {
     public abstract void postRegistry();
     public abstract void registry(LoomRegistry registry);
 
-    public List<LoomComponent> getComponents() {
+    public List<ComponentReference> getComponents() {
         return new ArrayList<>(COMPONENTS);
     }
 }

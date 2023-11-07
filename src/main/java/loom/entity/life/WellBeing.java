@@ -8,14 +8,16 @@ import loom.entity.weaver.Printable;
 
 @SuppressWarnings("unused")
 public class WellBeing extends EntityComponent {
-    public WellBeing addAltitudeFactor(int min, int max, float influence) {
-        add(1, min, max, influence);
-        return this;
-    }
+
 
     @Override
     protected String getDelimiter() {
         return ";;";
+    }
+
+    public WellBeing addAltitudeFactor(int min, int max, float influence) {
+        add(1, min, max, influence);
+        return this;
     }
 
     /**

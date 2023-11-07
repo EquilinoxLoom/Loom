@@ -1,6 +1,5 @@
 package equilinox.classification;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -205,10 +204,10 @@ public enum Family implements Specie {
         }
     }).map(Family::getId).collect(Collectors.toList());
 
-    private static class Cloud implements Classifiable {
+    public static class Cloud implements Classifiable {
         private final int c;
 
-        Cloud(int c) {
+        private Cloud(int c) {
             this.c = c;
             ids.add(c);
         }

@@ -18,12 +18,10 @@ public class Evolution extends EntityComponent {
     }
 
     public void addEatingRequirement(@NotNull Classifiable classification) {
-        //TODO FoodInfo.class
         add("EATING;" + classification);
     }
 
     public void addFruitProductivityRequirement(float target) {
-        //TODO FRUIT_FALLING?
         add("FRUIT_FALL;" + target);
     }
 

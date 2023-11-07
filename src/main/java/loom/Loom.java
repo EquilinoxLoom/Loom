@@ -1,6 +1,5 @@
 package loom;
 
-import equilinox.classification.Family;
 import equilinoxmodkit.mod.ModInfo;
 import equilinoxmodkit.mod.PreInitializer;
 import loom.mod.LoomMod;

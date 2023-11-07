@@ -4,6 +4,7 @@ import equilinox.VanillaComponent;
 import equilinox.classification.Classifiable;
 import equilinox.classification.Family;
 import loom.Util;
+import loom.component.ComponentPrint;
 import loom.entity.Entity;
 import loom.entity.animal.*;
 import loom.entity.life.BiomeSpreader;
@@ -27,7 +28,7 @@ import java.util.stream.IntStream;
 import static equilinox.VanillaComponent.*;
 
 public final class EntityProcessor implements Printable {
-    private final Map<VanillaComponent, String> components;
+    private final Map<ComponentPrint, String> components;
     private final Entity entity;
 
     private final List<String> header, body, footer;
@@ -251,7 +252,8 @@ public final class EntityProcessor implements Printable {
         if (entity instanceof LivingEntity) {
             LivingEntity life = (LivingEntity) entity;
 
-            EntityComponent print1 = new EntityComponent();
+            EntityComponent print1 = new EntityComponent() {
+            };
             float[] factors = life.populationFactors();
             print1.addSub(life.population(), life.lifespan(), factors.length + (factors.length > 0 ? ";"
                             + IntStream.range(0, factors.length).mapToDouble(i -> factors[i]).mapToObj(String::valueOf)
@@ -263,7 +265,8 @@ public final class EntityProcessor implements Printable {
             if (life.getDefense() != 0) print1.addSub(life.getDefense());
             components.put(LIFE, print1.build());
 
-            EntityComponent print2 = new EntityComponent();
+            EntityComponent print2 = new EntityComponent() {
+            };
             print2.addSub(life.dynamic(), life.growthTime(), life.stages());
             if (!life.dynamic()) print2.addSub(life.subStages());
             components.put(GROWTH, print2.build());
@@ -314,7 +317,10 @@ public final class EntityProcessor implements Printable {
                                 Classifiable::getClassification), predator.huntsYoung(), predator.huntsOld()));
             }
         }
-        components.entrySet().stream().filter(e -> e.getValue() != null).filter(e -> e.getKey().check(entity))
+
+        components.entrySet().stream()
+                .filter(e -> e.getValue() != null)
+                .filter(e -> e.getKey().getRequirements().stream().allMatch(entity::hasComponent))
                 .forEach(e -> addFooter(e.getKey().name() + (e.getValue().isEmpty() ? "" : ";" + e.getValue())));
     }
 

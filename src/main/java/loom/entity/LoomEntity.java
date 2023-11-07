@@ -4,7 +4,8 @@ import com.sun.istack.internal.NotNull;
 import equilinox.VanillaComponent;
 import equilinox.classification.Specie;
 import food.FoodSectionType;
-import loom.component.LoomComponent;
+import loom.component.ComponentPrint;
+import loom.component.ComponentReference;
 import loom.entity.life.Death;
 import loom.entity.other.Particle;
 import loom.entity.weaver.EntityProcessor;
@@ -16,9 +17,9 @@ import java.util.*;
 
 @SuppressWarnings("unused")
 public abstract class LoomEntity implements Specie, Entity {
-    protected final Map<VanillaComponent, String> components = new EnumMap<>(VanillaComponent.class);
+    protected final Map<ComponentPrint, String> components = new EnumMap(VanillaComponent.class);
 
-    protected final List<LoomComponent> loomComponents = new ArrayList<>();
+    protected final List<ComponentReference> componentReferences = new ArrayList<>();
 
     final EntityProcessor processor;
 
@@ -32,7 +33,7 @@ public abstract class LoomEntity implements Specie, Entity {
     }
 
     @Override
-    public Map<VanillaComponent, String> getComponents() {
+    public Map<ComponentPrint, String> getComponents() {
         return components;
     }
 
@@ -46,23 +47,23 @@ public abstract class LoomEntity implements Specie, Entity {
         return String.valueOf(id);
     }
 
-    public Entity addCustomComponent(LoomComponent component) {
-        loomComponents.add(component);
+    public Entity addCustomComponent(ComponentReference component) {
+        componentReferences.add(component);
         return this;
     }
 
-    public List<LoomComponent> getCustomComponents() {
-        return loomComponents;
+    public List<ComponentReference> getCustomComponents() {
+        return componentReferences;
     }
 
     //MATERIAL INFORMATION
 
-    private final Map<Color, Integer> materials = new LinkedHashMap<>();
+    private final LinkedHashMap<Color, Integer> materials = new LinkedHashMap<>();
 
     /**
      * @return a map of prices and colors
      */
-    public Map<Color, Integer> getMaterials() {
+    public LinkedHashMap<Color, Integer> getMaterials() {
         return materials;
     }
 

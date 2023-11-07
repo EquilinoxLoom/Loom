@@ -5,11 +5,12 @@ import loom.entity.other.Particle;
 import loom.entity.weaver.EntityComponent;
 import loom.entity.weaver.Printable;
 
+//TODO SUPPORT CUSTOM DEATH
 @SuppressWarnings("unused")
 public class Death extends EntityComponent {
     String name;
 
-    public Death(String name, Object... args) {
+    protected Death(String name, Object... args) {
         this.name = name;
         add(args);
     }

@@ -1,17 +1,17 @@
 package loom.entity;
 
-import equilinox.VanillaComponent;
 import equilinox.classification.Classifiable;
 import food.FoodSectionType;
+import loom.component.ComponentPrint;
 
 import java.awt.*;
 import java.util.Map;
 
 
 public interface Entity {
-    boolean hasComponent(VanillaComponent component);
+    boolean hasComponent(ComponentPrint component);
 
-    Map<VanillaComponent, String> getComponents();
+    Map<ComponentPrint, String> getComponents();
 
     int getId();
 

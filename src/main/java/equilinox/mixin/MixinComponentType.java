@@ -2,7 +2,6 @@ package equilinox.mixin;
 
 import componentArchitecture.ComponentLoader;
 import componentArchitecture.ComponentType;
-import equilinoxmodkit.mod.EquilinoxMod;
 import loom.mod.LoomMod;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
@@ -36,9 +35,9 @@ public class MixinComponentType {
         List<ComponentType> types = new ArrayList<>(Arrays.asList(ENUM$VALUES));
         LoomMod.getLooms().stream().map(LoomMod::getComponents).flatMap(Collection::stream)
                 .forEach(component -> {
-                    ComponentType type = newComponentType(component.name, types.size(), component.getLoader(),
-                            component.active, component.dynamic);
-                    types.add(type); component.setType(type);
+                    ComponentType type = newComponentType(component.name(), types.size(), component.getLoader(),
+                            component.isActive(), component.isDynamic());
+                    types.add(type); component.setBlueprintType(type);
                 });
         ENUM$VALUES = types.toArray(new ComponentType[0]);
     }

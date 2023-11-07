@@ -81,5 +81,5 @@ public class Diet extends EntityComponent {
         return this;
     }
 
-    public enum Animation {SIMPLE, THROWING, DIGGING, DIVING, INSTANT}
+    public enum Animation { SIMPLE, THROWING, DIGGING, DIVING, INSTANT }
 }

@@ -1,6 +1,6 @@
 package loom.mod;
 
-import loom.component.LoomComponent;
+import loom.component.ComponentReference;
 
 public class LoomRegistry {
     private final LoomMod mod;
@@ -9,7 +9,7 @@ public class LoomRegistry {
         this.mod = mod;
     }
 
-    public void registerComponent(LoomComponent component) {
+    public void registerComponent(ComponentReference component) {
         mod.COMPONENTS.add(component);
     }
 }

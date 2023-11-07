@@ -116,6 +116,7 @@ public class Particle extends EntityComponent {
         public SpawnPattern(Object... args) {
             add(args);
         }
+
     }
 
     public static SpawnPattern newPoint() {

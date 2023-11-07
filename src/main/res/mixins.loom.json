@@ -3,6 +3,7 @@
   "package": "equilinox.mixin",
   "minVersion": "0.7.10",
   "mixins": [
+    "MixinComponent",
     "MixinComponentType",
     "MixinFoodCompLoader",
     "MixinInformationComponentLoader",

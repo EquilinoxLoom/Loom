@@ -3,7 +3,7 @@ package loom.entity.weaver;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityComponent implements Printable {
+public abstract class EntityComponent implements Printable {
     protected EntityComponent() {}
 
     private final List<String> print = new ArrayList<>();
@@ -16,7 +16,7 @@ public class EntityComponent implements Printable {
 
         String build;
 
-        if (print.size() == 0) build = "0";
+        if (print.isEmpty()) build = "0";
         else if (print.size() == 1) build = getDelimiter() + print.get(0);
         else build = Printable.printArray(getDelimiter(), print.toArray(new String[0]), s -> s);
 
