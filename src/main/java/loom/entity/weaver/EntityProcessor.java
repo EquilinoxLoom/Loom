@@ -4,14 +4,10 @@ import equilinox.VanillaComponent;
 import equilinox.classification.Classifiable;
 import equilinox.classification.Family;
 import loom.Util;
-import loom.component.ComponentPrint;
+import loom.component.PrintableComponent;
 import loom.entity.Entity;
-import loom.entity.animal.*;
-import loom.entity.life.BiomeSpreader;
-import loom.entity.life.LivingEntity;
-import loom.entity.life.Tooltip;
+import loom.entity.living.*;
 import loom.entity.other.*;
-import loom.entity.plant.FruitProducer;
 import loom.mod.LoomMod;
 
 import java.awt.*;
@@ -27,8 +23,23 @@ import java.util.stream.IntStream;
 
 import static equilinox.VanillaComponent.*;
 
-public final class EntityProcessor implements Printable {
-    private final Map<ComponentPrint, String> components;
+/**
+ * Within game files, entity blueprints are stored in a special format in which,
+ * data is split by semicolons and line breaks as follows:
+ *
+ * <p>
+ *     Icon information...<br>
+ *     Entity classification<br>
+ *     Whether the entity can be placed underwater
+ *     + semicolon + Whether it can be placed overwater
+ *     + semicolon + Water level requirement<br>
+ *     Entity model information...<br>
+ *     Then it repeats the following for each component: Component name
+ *     + double semicolons + Component required and optional parameters split by double semicolons + line break
+ * </p>
+ */
+public final class EntityProcessor {
+    private final Map<PrintableComponent, String> components;
     private final Entity entity;
 
     private final List<String> header, body, footer;
@@ -41,12 +52,15 @@ public final class EntityProcessor implements Printable {
         this.footer = new ArrayList<>();
     }
 
-    @Override
     public String build() {
         buildHeader();
         buildBody();
         buildFooter();
         return String.join(";;", header) + "\n" + String.join("", body) + "\n" + String.join("\n", footer);
+    }
+
+    private String join(Object... os) {
+        return PrintUtils.print(";;", os);
     }
 
     private void addHeader(Object... os) {
@@ -63,9 +77,6 @@ public final class EntityProcessor implements Printable {
         if (entity.getIconSize() != 1) addHeader(0, entity.getIconSize());
         if (entity.getIconHeight() != 0) addHeader(entity.getIconHeight() + "\n");
         addHeader(entity.getLineage().getClassification() + "\n");
-        if (entity.goesUnderwater() || entity.goesOverwater()) {
-            addHeader((entity.goesUnderwater() ? 1 : 0) + ";" + (entity.goesOverwater() ? 1 : 0));
-        } else addHeader("0;1");
         addHeader((entity.goesUnderwater()) + ";" + (entity.goesOverwater()));
         if (entity.getWaterHeightRequired() != 0) addHeader(entity.getWaterHeightRequired());
     }
@@ -163,7 +174,7 @@ public final class EntityProcessor implements Printable {
         }
 
         for (int i = 0; i < pointerLists.size(); i++) {
-            body.add(Printable.print(";",
+            body.add(PrintUtils.print(";",
                     String.format(Locale.US, "%.4f", getMin(vertexLists.get(i), 0)),
                     String.format(Locale.US, "%.4f", getMin(vertexLists.get(i), 1)),
                     String.format(Locale.US, "%.4f", getMin(vertexLists.get(i), 2)),
@@ -181,7 +192,7 @@ public final class EntityProcessor implements Printable {
                     String[] convertedFaces = faceLists.get(i).get(j).split("/");
                     int faces0 = Integer.parseInt(convertedFaces[0]) - 1;
                     int faces1 = Integer.parseInt(convertedFaces[2]) - 1;
-                    body.add(Printable.print(";",
+                    body.add(PrintUtils.print(";",
                             String.format(Locale.US, "%.4f", vertexLists.get(i).get(faces0 * 3)),
                             String.format(Locale.US, "%.4f", vertexLists.get(i).get(faces0 * 3 + 1)),
                             String.format(Locale.US, "%.4f", vertexLists.get(i).get(faces0 * 3 + 2)),
@@ -192,7 +203,7 @@ public final class EntityProcessor implements Printable {
                 }
 
                 if (faceLists.get(i).get(j).contains("POINTER")) {
-                    body.add(Printable.print(";", "\n" +
+                    body.add(PrintUtils.print(";", "\n" +
                             (pointerLists.get(i).get(k) - pointerLists.get(i).get(k - 1)),
                             colourLists.get(i).get(point * 3).toString(),
                             colourLists.get(i).get(point * 3 + 1).toString(),
@@ -239,7 +250,7 @@ public final class EntityProcessor implements Printable {
                 i++;
             }
             components.put(MATERIAL, ";" + join(entity.getSecondNaturalColor() != null,
-                    Printable.printArray(";", map.entrySet().toArray(new Map.Entry[0]), e -> {
+                    PrintUtils.printArray(";", map.entrySet().toArray(new Map.Entry[0]), e -> {
                         Map.Entry<Color, Integer> entry = (Map.Entry<Color, Integer>) e;
                         return Util.isVanilla(entry.getKey()) + ";" + entry.getValue();
                     })));
@@ -289,12 +300,12 @@ public final class EntityProcessor implements Printable {
                     builder.buildTime(), (builder.age() - 1) / ((LivingEntity) entity).stages()) +
                     (builder.buildingHour() != 0 ? ";;" + builder.buildTime() : ""));
         }
-        if (entity.hasComponent(FOOD)) components.put(FOOD, Printable.printArray(";", entity.getFoodInfo().values()
+        if (entity.hasComponent(FOOD)) components.put(FOOD, PrintUtils.printArray(";", entity.getFoodInfo().values()
                 .toArray(new String[0]), s -> s));
         byAnnotation(STINGING, Stinger.class);
         byAnnotation(CHARGE, TreeCharger.class);
         byAnnotation(PEACOCK, Peacock.class);
-        if (entity instanceof Holder) components.put(EQUIP, ";" + Printable.printArray(";;",
+        if (entity instanceof Holder) components.put(EQUIP, ";" + PrintUtils.printArray(";;",
                 ((Holder) entity).positions(), v -> v.x + ";" + v.y + ";" + v.z));
         byAnnotation(NAME, Named.class);
         byAnnotation(BEAVER, DenBuilder.class);
@@ -313,7 +324,7 @@ public final class EntityProcessor implements Printable {
             if (entity.goesUnderwater()) components.put(FISH_HUNT, "");
             if (entity.goesOverwater()) {
                 if (entity.hasEggStage()) components.put(BIRD_HUNT, "");
-                else components.put(HUNT, ";" + join(predator.range(), Printable.printArray(";;", predator.preys(),
+                else components.put(HUNT, ";" + join(predator.range(), PrintUtils.printArray(";;", predator.preys(),
                                 Classifiable::getClassification), predator.huntsYoung(), predator.huntsOld()));
             }
         }

@@ -1,4 +1,4 @@
-package loom.entity.animal;
+package loom.entity.living;
 
 import org.lwjgl.util.vector.Vector3f;
 

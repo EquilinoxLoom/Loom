@@ -1,4 +1,4 @@
-package loom.entity.life;
+package loom.entity.living;
 
 import equilinox.Environment;
 

@@ -12,7 +12,6 @@ import speciesInformation.SpeciesInfoType;
 import utils.CSVReader;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -35,27 +34,9 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
         component.registry.params.forEach((label, type) -> {
             reader.getNextString(); params.put(label, readTextType(reader, type));
         });
-        int i = 0, j = 0;
-        for (Map.Entry<Field, Object> entry : component.registry.optionalParams.entrySet()) {
-            try {
-                i++; if (!entry.getKey().get(component).equals(entry.getValue())) j = i;
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        Field[] fields = component.registry.optionalParams.keySet().toArray(new Field[0]);
-        for (int l = 0; l < j; l++) if (!reader.isEndOfLine()) {
-            reader.getNextString();
-            params.put(fields[i].getName(), readTextType(reader, fields[i].getType()));
-        }
 
-        List<Constructor<?>> constructors = Arrays.stream(component.getClass().getConstructors())
-                .filter(constructor -> constructor.getParameterCount() == params.size()).collect(Collectors.toList());
-        if (constructors.isEmpty()) throw new RuntimeException("No constructors were found with " + params.size()
-                + " parameters at " + component.getClass().getSimpleName() + ". "
-                + component.registry.optionalParams.size() + " optional parameters were registered.");
-
-        for (Constructor<?> constructor : constructors) {
+        for (Constructor<?> constructor : Arrays.stream(component.getClass().getConstructors())
+                .filter(constructor -> constructor.getParameterCount() == params.size()).collect(Collectors.toList())) {
             try {
                 constructor.setAccessible(true);
                 LoomComponent component = (LoomComponent) constructor.newInstance(params.values().toArray());

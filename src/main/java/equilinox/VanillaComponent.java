@@ -3,12 +3,12 @@ package equilinox;
 import componentArchitecture.Component;
 import componentArchitecture.ComponentBundle;
 import componentArchitecture.ComponentType;
-import loom.component.ComponentPrint;
+import loom.component.PrintableComponent;
 
 import java.util.Arrays;
 import java.util.List;
 
-public enum VanillaComponent implements ComponentPrint {
+public enum VanillaComponent implements PrintableComponent {
     TRANSFORM,
     MESH,
     SPREADER,
@@ -64,13 +64,16 @@ public enum VanillaComponent implements ComponentPrint {
     DROP,
     HOSTILE(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, EQUIP, AI, FIGHT);
 
-    private final List<ComponentPrint> requirements;
+    /**
+     * List of components loaded at this component creation.
+     */
+    private final List<PrintableComponent> requirements;
 
     VanillaComponent(VanillaComponent... requirements) {
         this.requirements = Arrays.asList(requirements);
     }
 
-    public List<ComponentPrint> getRequirements() {
+    public List<PrintableComponent> getRequirements() {
         return requirements;
     }
 

@@ -1,9 +1,7 @@
-package loom.entity.plant;
+package loom.entity.living;
 
 import equilinox.classification.Specie;
-import loom.entity.life.Evolution;
-import loom.entity.life.WellBeing;
-import loom.entity.weaver.Printable;
+import loom.entity.weaver.PrintUtils;
 
 import java.awt.*;
 
@@ -27,6 +25,6 @@ public abstract class TreeEntity extends PlantEntity {
     }
 
     public void setFruiter(Specie fruit, float fallChancePerHour, float height, float radius) {
-        components.put(FRUIT_FALL, ";" + Printable.print(";;", fruit.getId(), 0.012f / fallChancePerHour, height, radius));
+        components.put(FRUIT_FALL, ";" + PrintUtils.print(";;", fruit.getId(), 0.012f / fallChancePerHour, height, radius));
     }
 }

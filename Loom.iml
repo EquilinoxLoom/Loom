@@ -29,5 +29,6 @@
     <orderEntry type="module" module-name="equilinox-mod-kit" />
     <orderEntry type="library" name="mixin-0.8" level="project" />
     <orderEntry type="library" name="asm-all-5.2" level="project" />
+    <orderEntry type="library" name="equilinox-mod-loader-0.4.3" level="project" />
   </component>
 </module>

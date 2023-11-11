@@ -1,15 +1,11 @@
-package loom.entity.plant;
+package loom.entity.living;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import equilinox.VanillaComponent;
 import food.FoodSectionType;
-import loom.entity.life.Death;
-import loom.entity.life.Evolution;
-import loom.entity.life.LivingEntity;
-import loom.entity.life.WellBeing;
 import loom.entity.other.Particle;
-import loom.entity.weaver.Printable;
+import loom.entity.weaver.PrintUtils;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.Arrays;
@@ -24,7 +20,7 @@ public abstract class PlantEntity extends LivingEntity {
     }
 
     public void setParticles(Particle particle, float range, int[] stages, boolean usesPlantColor) {
-        this.components.put(VanillaComponent.PARTICLES, Printable.print(";;", particle.build(), range,
+        this.components.put(VanillaComponent.PARTICLES, PrintUtils.print(";;", particle.build(), range,
                 stages.length + (stages.length > 0 ? Arrays.stream(stages).boxed().map(String::valueOf)
                         .collect(Collectors.joining(";")) : ""), usesPlantColor));
     }

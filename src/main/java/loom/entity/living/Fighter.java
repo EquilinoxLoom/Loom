@@ -1,4 +1,4 @@
-package loom.entity.animal;
+package loom.entity.living;
 
 public interface Fighter {
     int attackDamage();

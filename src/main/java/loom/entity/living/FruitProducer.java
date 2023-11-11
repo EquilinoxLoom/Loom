@@ -1,4 +1,4 @@
-package loom.entity.plant;
+package loom.entity.living;
 
 public interface FruitProducer {
     /**

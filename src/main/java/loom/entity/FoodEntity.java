@@ -1,7 +1,7 @@
 package loom.entity;
 
 import equilinox.VanillaComponent;
-import loom.entity.life.Tooltip;
+import loom.entity.living.Tooltip;
 import loom.entity.other.Particle;
 
 public abstract class FoodEntity extends LoomEntity {

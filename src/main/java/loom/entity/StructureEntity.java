@@ -1,22 +1,18 @@
 package loom.entity;
 
 import equilinox.VanillaComponent;
-import equilinox.classification.Specie;
-import loom.entity.animal.Builder;
-import loom.entity.life.Tooltip;
+import loom.entity.living.Tooltip;
 
 public abstract class StructureEntity extends LoomEntity implements Tooltip {
     private final int stages;
 
-    protected <T extends Builder & Specie> StructureEntity(int id, T builder, int buildStages,
-                                                           int maxBuildPoints) {
+    protected StructureEntity(int id, int buildStages, int maxBuildPoints) {
         super(id);
         this.components.put(VanillaComponent.BUILD, buildStages + ";" + maxBuildPoints);
         this.stages = buildStages;
     }
 
-    protected <T extends Builder & Specie> StructureEntity(int id, T builder, int buildStages, int maxBuildPoints,
-                                                           int fullyBuiltPoints) {
+    protected StructureEntity(int id, int buildStages, int maxBuildPoints, int fullyBuiltPoints) {
         super(id);
         this.components.put(VanillaComponent.BUILD, buildStages + ";" + maxBuildPoints + ";;" + fullyBuiltPoints);
         this.stages = buildStages;

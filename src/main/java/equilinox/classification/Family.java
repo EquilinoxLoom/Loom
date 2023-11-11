@@ -7,11 +7,22 @@ import java.util.stream.Collectors;
 import static equilinox.classification.Order.*;
 
 /**
- * NEVER USE FIELDS MARKED AS @DEPRECATED!!!
+ * Enumeration representing various families of entities in the Equilinox classification system.
+ * Each family is associated with a specific super-order, indicating its broader classification.
+ *
+ * <p>
+ * Calling {@link Classifiable#getClassification()} in a family returns its classification followed by its ID.
+ * For example, {@code OAK_TREE} returns "ptw2", which stands for plant, tree, woodland tree, and ordinal ID 2.
+ * </p>
+ *
+ * <p>
+ * Note: DO NOT USE FIELDS MARKED AS @DEPRECATED!!! Those fields are not implemented entities; they are
+ * hollow files within the game files that aren't supposed to be loaded in the game.
+ * </p>
  */
 @SuppressWarnings("unused")
 public enum Family implements Specie {
-    TEST(HEAD),
+    @Deprecated TEST(HEAD),
     SHEEP(MEDIUM_HERBIVORE),
     OAK_TREE(WOODLAND_TREE),
     BERRY_BUSH(FRUIT_BUSH),
@@ -204,7 +215,10 @@ public enum Family implements Specie {
         }
     }).map(Family::getId).collect(Collectors.toList());
 
-    public static class Cloud implements Classifiable {
+    /**
+     * Represents a cloud entity, belonging to the CLOUD super-order.
+     */
+    private static class Cloud implements Specie {
         private final int c;
 
         private Cloud(int c) {
@@ -221,12 +235,20 @@ public enum Family implements Specie {
         public String getNode() {
             return String.valueOf(c);
         }
+
+        @Override
+        public int getId() {
+            return c;
+        }
     }
 
-    public static final Cloud CLOUD_0 = new Cloud(1000);
-    public static final Cloud CLOUD_1 = new Cloud(1001);
-    public static final Cloud CLOUD_2 = new Cloud(1002);
-    public static final Cloud CLOUD_3 = new Cloud(1003);
+    /**
+     * Cloud entities with specific IDs.
+     */
+    public static final Specie CLOUD_0 = new Cloud(1000);
+    public static final Specie CLOUD_1 = new Cloud(1001);
+    public static final Specie CLOUD_2 = new Cloud(1002);
+    public static final Specie CLOUD_3 = new Cloud(1003);
 
     private final Classifiable superOrder;
 
@@ -249,6 +271,12 @@ public enum Family implements Specie {
         return ordinal();
     }
 
+    /**
+     * Checks if a given ID is available for use within the enumeration.
+     *
+     * @param id The ID to check for availability.
+     * @return True if the ID is available, false otherwise.
+     */
     public static boolean isIdAvailable(int id) {
         return ids.contains(id);
     }

@@ -1,4 +1,4 @@
-package loom.entity.life;
+package loom.entity.living;
 
 public interface Living {
     float population();

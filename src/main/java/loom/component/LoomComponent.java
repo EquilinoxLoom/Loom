@@ -39,12 +39,12 @@ import java.util.Map;
  * all optionals at {@link #create(ComponentRequester) create} method. The parameters must be registered in order.
  * </p>
  */
-public abstract class LoomComponent extends Component implements ComponentReference, ComponentPrint {
-    private final List<ComponentPrint> requirements = new ArrayList<>();
+public abstract class LoomComponent extends Component implements ComponentReference, PrintableComponent {
     private final List<PopUpInfoGui> info = new ArrayList<>();
     private final List<Action> actions = new ArrayList<>();
 
     private LoomBlueprint loader = null;
+    private List<PrintableComponent> requirements;
 
     //TODO SUPPORT CUSTOM TABS
     final Map<SpeciesInfoType, Pair<String, String>> speciesInfo = new HashMap<>();
@@ -103,7 +103,9 @@ public abstract class LoomComponent extends Component implements ComponentRefere
 
     @Override
     public void create(ComponentBundle bundle) {
-        create(new ComponentRequester(requirements, bundle));
+        ComponentRequester requester = new ComponentRequester(bundle);
+        create(requester);
+        requirements = requester.requirements;
     }
 
     protected abstract void create(ComponentRequester requester);
@@ -124,7 +126,7 @@ public abstract class LoomComponent extends Component implements ComponentRefere
         return loader;
     }
 
-    public List<ComponentPrint> getRequirements() {
+    public List<PrintableComponent> getRequirements() {
         return requirements;
     }
 

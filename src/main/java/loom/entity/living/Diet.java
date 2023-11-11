@@ -1,10 +1,10 @@
-package loom.entity.animal;
+package loom.entity.living;
 
 import equilinox.classification.Classifiable;
 import food.FoodSectionType;
 import loom.entity.Entity;
 import loom.entity.weaver.EntityComponent;
-import loom.entity.weaver.Printable;
+import loom.entity.weaver.PrintUtils;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -23,7 +23,7 @@ public class Diet extends EntityComponent {
 
     @Override
     public String build() {
-        return ";" + Printable.print(";;", hunger, hungerHour, radius, Printable.printArray(";",
+        return ";" + PrintUtils.print(";;", hunger, hungerHour, radius, PrintUtils.printArray(";",
                 animations.toArray(new Animation[0]), animation -> String.valueOf(animation.ordinal()))
                 + ";" + super.build());
     }

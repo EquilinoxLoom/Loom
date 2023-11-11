@@ -2,22 +2,21 @@ package loom.entity;
 
 import com.sun.istack.internal.NotNull;
 import equilinox.VanillaComponent;
-import equilinox.classification.Specie;
 import food.FoodSectionType;
-import loom.component.ComponentPrint;
+import loom.component.PrintableComponent;
 import loom.component.ComponentReference;
-import loom.entity.life.Death;
+import loom.entity.living.Death;
 import loom.entity.other.Particle;
 import loom.entity.weaver.EntityProcessor;
-import loom.entity.weaver.Printable;
+import loom.entity.weaver.PrintUtils;
 
 import java.awt.*;
 import java.util.List;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public abstract class LoomEntity implements Specie, Entity {
-    protected final Map<ComponentPrint, String> components = new EnumMap(VanillaComponent.class);
+public abstract class LoomEntity implements Entity {
+    protected final Map<PrintableComponent, String> components = new EnumMap(VanillaComponent.class);
 
     protected final List<ComponentReference> componentReferences = new ArrayList<>();
 
@@ -33,7 +32,12 @@ public abstract class LoomEntity implements Specie, Entity {
     }
 
     @Override
-    public Map<ComponentPrint, String> getComponents() {
+    public boolean hasComponent(PrintableComponent component) {
+        return components.containsKey(component);
+    }
+
+    @Override
+    public Map<PrintableComponent, String> getComponents() {
         return components;
     }
 
@@ -75,7 +79,7 @@ public abstract class LoomEntity implements Specie, Entity {
         return null;
     }
 
-    public String getClassification() {
+    public final String getClassification() {
         return getLineage().getClassification() + getId();
     }
 
@@ -88,7 +92,7 @@ public abstract class LoomEntity implements Specie, Entity {
      */
     public void setRandomSounder(float minCooldown, float maxCooldown, int range, @NotNull String... sounds) {
         components.put(VanillaComponent.SOUND, "");
-        components.put(VanillaComponent.RANDOM_SOUNDER, Printable.print(";", minCooldown, maxCooldown, sounds.length,
+        components.put(VanillaComponent.RANDOM_SOUNDER, PrintUtils.print(";", minCooldown, maxCooldown, sounds.length,
                 String.join(";" + range + ";", sounds), range));
     }
 
@@ -129,12 +133,10 @@ public abstract class LoomEntity implements Specie, Entity {
 
     protected void setEdibleAsHoney(int points) {
         foodInfo.computeIfAbsent(FoodSectionType.HONEY, type -> {
-            /*
-            if (!entity.TODO) {
-                System.err.println("Entity " + id + " must contain ");
+            if (!hasComponent(VanillaComponent.HIVE)) {
+                System.err.println("Entity " + id + " must be a structure  container");
                 return null;
             }
-            */
             return "EMBROIDER-" + type.name() + ";" + points;
         });
     }

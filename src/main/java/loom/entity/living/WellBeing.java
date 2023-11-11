@@ -1,10 +1,10 @@
-package loom.entity.life;
+package loom.entity.living;
 
 import com.sun.istack.internal.NotNull;
 import equilinox.classification.Classifiable;
 import loom.IEnvironment;
 import loom.entity.weaver.EntityComponent;
-import loom.entity.weaver.Printable;
+import loom.entity.weaver.PrintUtils;
 
 @SuppressWarnings("unused")
 public class WellBeing extends EntityComponent {
@@ -26,13 +26,13 @@ public class WellBeing extends EntityComponent {
      */
     public WellBeing addSuitableBiomeFactor(float influence, boolean growsInBarren, float idealPercentage,
                                             @NotNull IEnvironment... biomes) {
-        add(2, growsInBarren, biomes.length == 0 ? "0" : Printable.printArray(";", biomes,
+        add(2, growsInBarren, biomes.length == 0 ? "0" : PrintUtils.printArray(";", biomes,
                 biome -> String.valueOf(biome.getId())), idealPercentage, influence);
         return this;
     }
 
     public WellBeing addUnsuitableBiomeFactor(float influence, @NotNull IEnvironment... biomes) {
-        add(3, Printable.printArray(";", biomes, biome -> String.valueOf(biome.getId())), influence);
+        add(3, PrintUtils.printArray(";", biomes, biome -> String.valueOf(biome.getId())), influence);
         return this;
     }
 
@@ -42,7 +42,7 @@ public class WellBeing extends EntityComponent {
     }
 
     private WellBeing addSpeciesFactor(int id, float influence, @NotNull Classifiable... classifications) {
-        add(id, Printable.printArray(";", classifications, Classifiable::getClassification), influence);
+        add(id, PrintUtils.printArray(";", classifications, Classifiable::getClassification), influence);
         return this;
     }
 

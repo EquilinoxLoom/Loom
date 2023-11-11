@@ -1,15 +1,11 @@
-package loom.entity.animal;
+package loom.entity.living;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import equilinox.VanillaComponent;
 import equilinox.classification.Classifiable;
 import equilinox.classification.Specie;
-import loom.entity.life.Death;
-import loom.entity.life.Evolution;
-import loom.entity.life.LivingEntity;
-import loom.entity.life.WellBeing;
-import loom.entity.weaver.Printable;
+import loom.entity.weaver.PrintUtils;
 
 @SuppressWarnings("unused")
 public abstract class AnimalEntity extends LivingEntity {
@@ -36,7 +32,7 @@ public abstract class AnimalEntity extends LivingEntity {
      * Standard values are: min = 5; max = 10
      */
     public void setPatrolAI(float minIdleTime, float maxIdleTime) {
-        this.components.put(VanillaComponent.AI, Printable.print(";;", "PATROL"
+        this.components.put(VanillaComponent.AI, PrintUtils.print(";;", "PATROL"
                 + (goesUnderwater() ? "_WITH_SWIM" : ""), minIdleTime, maxIdleTime));
     }
 
@@ -45,11 +41,11 @@ public abstract class AnimalEntity extends LivingEntity {
     }
 
     public void setFlyAI(float circleRotation, float circleMinTime) {
-        this.components.put(VanillaComponent.AI, Printable.print(";;", "BIRD", circleRotation, circleMinTime));
+        this.components.put(VanillaComponent.AI, PrintUtils.print(";;", "BIRD", circleRotation, circleMinTime));
     }
 
     public void setWalkingBirdAI(float minIdleTime, float maxIdleTime) {
-        this.components.put(VanillaComponent.AI, Printable.print(";;", "WALKING_BIRD", minIdleTime, maxIdleTime,
+        this.components.put(VanillaComponent.AI, PrintUtils.print(";;", "WALKING_BIRD", minIdleTime, maxIdleTime,
                 goesUnderwater()));
     }
 
@@ -62,7 +58,7 @@ public abstract class AnimalEntity extends LivingEntity {
     }
 
     public void setMeerkatAI(float minIdleTime, float maxIdleTime) {
-        this.components.put(VanillaComponent.AI, Printable.print(";;", "MEERKAT", minIdleTime, maxIdleTime));
+        this.components.put(VanillaComponent.AI, PrintUtils.print(";;", "MEERKAT", minIdleTime, maxIdleTime));
     }
 
     public void setDolphinAI() {
@@ -70,12 +66,12 @@ public abstract class AnimalEntity extends LivingEntity {
     }
 
     public void setSleeps(float minStartHour, float maxStartHour, float minEndHour, float maxEndHour) {
-        components.put(VanillaComponent.SLEEP, ";" + Printable.print(";;", minStartHour, maxStartHour, minEndHour,
+        components.put(VanillaComponent.SLEEP, ";" + PrintUtils.print(";;", minStartHour, maxStartHour, minEndHour,
                 maxEndHour));
     }
 
     public void setFlees(float range) {
-        components.put(VanillaComponent.FLEE, ";" + Printable.print(";;", range, goesOverwater(), goesUnderwater()));
+        components.put(VanillaComponent.FLEE, ";" + PrintUtils.print(";;", range, goesOverwater(), goesUnderwater()));
     }
 
     /**Guinea pigs panic*/
@@ -84,7 +80,7 @@ public abstract class AnimalEntity extends LivingEntity {
     }
 
     public void setHides(float range, Classifiable hidingSpot) {
-        components.put(VanillaComponent.FLEE, ";" + Printable.print(";;", range, goesOverwater(), goesUnderwater(),
+        components.put(VanillaComponent.FLEE, ";" + PrintUtils.print(";;", range, goesOverwater(), goesUnderwater(),
                 hidingSpot.getClassification()));
     }
 
@@ -110,7 +106,7 @@ public abstract class AnimalEntity extends LivingEntity {
      * @param siteStage least stage the site must be to support breeding.
      */
     public void setBreedSite(Specie site, int siteStage, boolean decreasesSiteStage) {
-        components.put(VanillaComponent.NESTING, ";" + Printable.print(";;", site.getClassification(),
+        components.put(VanillaComponent.NESTING, ";" + PrintUtils.print(";;", site.getClassification(),
                 siteStage, decreasesSiteStage));
     }
 

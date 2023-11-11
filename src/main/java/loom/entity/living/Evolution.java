@@ -1,4 +1,4 @@
-package loom.entity.life;
+package loom.entity.living;
 
 import com.sun.istack.internal.NotNull;
 import equilinox.classification.Classifiable;

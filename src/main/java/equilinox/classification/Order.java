@@ -1,7 +1,13 @@
 package equilinox.classification;
 
 /**
- * NEVER USE FIELDS MARKED AS @DEPRECATED!!!
+ * Enumeration representing various orders of entities in the Equilinox classification system.
+ * Each family is associated with a specific parent, indicating its broader classification.
+ *
+ * <p>
+ * Note: DO NOT USE FIELDS MARKED AS @DEPRECATED!!! Those fields are not implemented classifications;
+ * they are hollow files within the game files that aren't supposed to be loaded in the game.
+ * </p>
  */
 public enum Order implements Classifiable {
     PLANT('p', HEAD),
