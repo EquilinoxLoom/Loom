@@ -1,9 +1,10 @@
 package loom.mod;
 
 import equilinox.classification.Classifiable;
+import equilinox.ducktype.BiomeReference;
 import equilinoxmodkit.mod.EquilinoxMod;
 import equilinoxmodkit.mod.Initializer;
-import loom.component.ComponentReference;
+import loom.CustomEatingAnimation;
 import loom.component.LoomComponent;
 
 import java.util.ArrayList;
@@ -17,6 +18,9 @@ public abstract class LoomMod extends EquilinoxMod {
 
     final Map<String, Classifiable> CLASSIFICATIONS = new HashMap<>();
     final List<LoomComponent> COMPONENTS = new ArrayList<>();
+    final List<BiomeReference> BIOMES = new ArrayList<>();
+    final List<CustomEatingAnimation> EATING_ANIMATIONS = new ArrayList<>();
+
 
     public LoomMod() {
         LoomMod.LOOMS.add(this);
@@ -37,5 +41,13 @@ public abstract class LoomMod extends EquilinoxMod {
 
     public List<LoomComponent> getComponents() {
         return new ArrayList<>(COMPONENTS);
+    }
+
+    public List<BiomeReference> getBiomes() {
+        return new ArrayList<>(BIOMES);
+    }
+
+    public List<CustomEatingAnimation> getEatingAnimations() {
+        return new ArrayList<>(EATING_ANIMATIONS);
     }
 }

@@ -1,10 +1,11 @@
 package loom.entity;
 
 import com.sun.istack.internal.NotNull;
-import equilinox.VanillaComponent;
+import equilinox.ducktype.ComponentReference;
+import equilinox.ducktype.SoundReference;
+import equilinox.vanilla.VanillaComponent;
 import food.FoodSectionType;
 import loom.component.PrintableComponent;
-import loom.component.ComponentReference;
 import loom.entity.living.Death;
 import loom.entity.other.Particle;
 import loom.entity.weaver.EntityProcessor;
@@ -13,9 +14,11 @@ import loom.entity.weaver.PrintUtils;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public abstract class LoomEntity implements Entity {
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected final Map<PrintableComponent, String> components = new EnumMap(VanillaComponent.class);
 
     protected final List<ComponentReference> componentReferences = new ArrayList<>();
@@ -51,10 +54,12 @@ public abstract class LoomEntity implements Entity {
         return String.valueOf(id);
     }
 
-    public Entity addCustomComponent(ComponentReference component) {
-        componentReferences.add(component);
+    /*
+    public void addCustomComponent(LoomComponent component) {
+        components.put(component, component.);
         return this;
     }
+     */
 
     public List<ComponentReference> getCustomComponents() {
         return componentReferences;
@@ -87,17 +92,14 @@ public abstract class LoomEntity implements Entity {
         return components.containsKey(component);
     }
 
-    /**
-     * @param sounds SoundFile.toString() or the name of a Vanilla Sound
-     */
-    public void setRandomSounder(float minCooldown, float maxCooldown, int range, @NotNull String... sounds) {
+    public void setRandomSounder(float minCooldown, float maxCooldown, int range, @NotNull SoundReference... sounds) {
         components.put(VanillaComponent.SOUND, "");
         components.put(VanillaComponent.RANDOM_SOUNDER, PrintUtils.print(";", minCooldown, maxCooldown, sounds.length,
-                String.join(";" + range + ";", sounds), range));
+                Arrays.stream(sounds).map(SoundReference::id).collect(Collectors.joining(";" + range + ";")), range));
     }
 
-    public void setLoopingSounder(float range, float volume, String sound) {
-        components.put(VanillaComponent.SOUND_LOOPER, ";" + sound + ";;" + range + ";;" + volume);
+    public void setLoopingSounder(float range, float volume, SoundReference sound) {
+        components.put(VanillaComponent.SOUND_LOOPER, ";" + sound.id() + ";;" + range + ";;" + volume);
     }
 
     protected final Map<FoodSectionType, String> foodInfo = new HashMap<>();
@@ -148,7 +150,7 @@ public abstract class LoomEntity implements Entity {
     }
 
     /**
-     * Whether the entity dies when the perch slot is removed.
+     * @param perchLink Whether the entity dies when the perch slot is removed.
      */
     public void setPerches(boolean perchLink) {
         this.components.put(VanillaComponent.PERCHER, perchLink ? ";1" : ";0");

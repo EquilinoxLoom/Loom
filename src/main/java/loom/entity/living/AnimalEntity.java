@@ -2,9 +2,9 @@ package loom.entity.living;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
-import equilinox.VanillaComponent;
 import equilinox.classification.Classifiable;
 import equilinox.classification.Specie;
+import equilinox.vanilla.VanillaComponent;
 import loom.entity.weaver.PrintUtils;
 
 @SuppressWarnings("unused")

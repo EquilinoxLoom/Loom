@@ -1,22 +1,48 @@
 package loom.entity.living;
 
-import equilinox.Environment;
+import equilinox.ducktype.BiomeReference;
 
+/**
+ * An entity implementing this interface can spread biomes.
+ */
 public interface BiomeSpreader {
-    Environment biome();
 
     /**
-     * Higher biome spreading strength ensures predominance of the biome within the range.
-     * It's usually related to general population density of the specie.
-     * The slow-expanding Willows (25), Fir Trees (24), and Spruce trees (23) are the strongest spreading plants,
-     * while fast-expanding grasses, primroses (5.5), bamboos, daisies and mushrooms (5)
-     * are the weakest spreading plants.<p>
-     * Most plants don't go above 6.5, but Cacti (12 to 10) and Water plants (14 to 7) tend to be strongest-spreading.
+     * Gets the spreading biome.
+     *
+     * @return The biome.
+     */
+    BiomeReference biome();
+
+    /**
+     * Gets the biome spreading strength, which ensures predominance of the biome within the range.
+     * Higher spreading strength is usually related to the general population density of the species.
+     * Examples of spreading strengths:
+     * <ul>
+     *     <li>Slow-expanding plants: Willows (25), Fir Trees (24), Spruce Trees (23)</li>
+     *     <li>Fast-expanding plants: Grasses, Primroses (5.5), Bamboos, Daisies, Mushrooms (5)</li>
+     * </ul>
+     * In addition, there are some biome spreaders whose biome is spread by only a few species,
+     * and to counter this situation, some of them are really strong spreaders:
+     * <ul>
+     *     <li>Strongest spreading plants: Cacti (12 to 10), Aquatic Plants (14 to 7)</li>
+     * </ul>
+     *
+     * @return The biome spreading strength.
      */
     int strength();
 
     /**
-     * Distance in grid squares. It's usually 5, except for some trees (6), cacti (7 or 8), wheat and potato (4)
+     * Gets the spreading distance in grid squares.
+     * Examples of spreading distances:
+     * <ul>
+     *     <li>Most spreaders: 5</li>
+     *     <li>Some trees: 6</li>
+     *     <li>Cacti: 7 or 8</li>
+     *     <li>Wheat and Potato: 4</li>
+     * </ul>
+     *
+     * @return The spreading distance.
      */
     int distance();
 }

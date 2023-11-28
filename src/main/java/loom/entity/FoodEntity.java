@@ -1,6 +1,6 @@
 package loom.entity;
 
-import equilinox.VanillaComponent;
+import equilinox.vanilla.VanillaComponent;
 import loom.entity.living.Tooltip;
 import loom.entity.other.Particle;
 

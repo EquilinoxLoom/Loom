@@ -4,6 +4,8 @@ import classification.Classification;
 import classification.Classifier;
 import equilinox.classification.Classifiable;
 import equilinox.classification.Specie;
+import equilinox.ducktype.BiomeReference;
+import loom.CustomEatingAnimation;
 import loom.component.LoomComponent;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,6 +20,14 @@ public class LoomRegistry {
 
     public void registerComponent(LoomComponent component) {
         mod.COMPONENTS.add(component);
+    }
+
+    public void registerBiome(BiomeReference reference) {
+        mod.BIOMES.add(reference);
+    }
+
+    public void registerEatingAnimation(CustomEatingAnimation animation) {
+        mod.EATING_ANIMATIONS.add(animation);
     }
 
     public Classifiable requestNewClassification(Classifiable parent, char id, String name) {

@@ -1,5 +1,10 @@
 package loom.entity.weaver;
 
+import org.lwjgl.util.vector.Vector3f;
+import utils.BinaryReader;
+import utils.BinaryWriter;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
@@ -63,5 +68,46 @@ public class PrintUtils {
      */
     public static String printArray(String joiner, int[] is, Function<Integer, String> func) {
         return is.length + joiner + Arrays.stream(is).boxed().map(func).collect(Collectors.joining(joiner));
+    }
+
+    /**
+     * Writes a binary representation of the specified value using the provided BinaryWriter.
+     *
+     * @param writer The BinaryWriter to use for writing.
+     * @param value  The value to write.
+     * @param <T>    The type of the value.
+     * @return True if the value was successfully written, false otherwise.
+     * @throws IOException if an I/O error occurs.
+     * In particular, an {@code IOException} may be thrown if the output stream has been closed.
+     */
+    public static <T> boolean writeBinaryType(BinaryWriter writer, T value) throws IOException {
+        if (value instanceof Integer) writer.writeInt((int) value);
+        else if (value instanceof Float) writer.writeFloat((float) value);
+        else if (value instanceof Long) writer.writeLong((long) value);
+        else if (value instanceof Short) writer.writeShort((short) value);
+        else if (value instanceof Vector3f) writer.writeVector((Vector3f) value);
+        else if (value instanceof Boolean) writer.writeBoolean((boolean) value);
+        else if (value instanceof String) writer.writeString((String) value);
+        else return false;
+        return true;
+    }
+
+    /**
+     * Reads a binary representation of a value from the provided BinaryReader, assuming the specified class type.
+     *
+     * @param reader The BinaryReader to use for reading.
+     * @param clazz  The class type of the value.
+     * @return The read value.
+     * @throws Exception If class is not supported by the reader.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T readBinaryType(BinaryReader reader, Class<T> clazz) throws Exception {
+        if (clazz.equals(Integer.class)) return (T) Integer.valueOf(reader.readInt());
+        else if (clazz.equals(Float.class)) return (T) Float.valueOf(reader.readFloat());
+        else if (clazz.equals(Vector3f.class)) return (T) reader.readVector();
+        else if (clazz.equals(Boolean.class)) return (T) Boolean.valueOf(reader.readBoolean());
+        else if (clazz.equals(Long.class)) return (T) Long.valueOf(reader.readLong());
+        else if (clazz.equals(String.class)) return (T) reader.readString();
+        else throw new RuntimeException("Unsupported class type");
     }
 }

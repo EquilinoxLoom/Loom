@@ -3,7 +3,7 @@ package loom.component;
 import componentArchitecture.Component;
 import componentArchitecture.ComponentBundle;
 
-import java.util.List;
+import java.util.Set;
 
 public interface PrintableComponent {
     /**
@@ -12,8 +12,10 @@ public interface PrintableComponent {
      */
     <T extends Component> T getComponent(ComponentBundle bundle);
 
-    /**@return a list representing the components loaded at the creation of this component.*/
-    List<PrintableComponent> getRequirements();
+    /**
+     * @return a list representing the components loaded at the creation of this component.
+     */
+    Set<PrintableComponent> getRequirements();
 
     String name();
 }

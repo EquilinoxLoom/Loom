@@ -1,9 +1,10 @@
 package loom.entity.weaver;
 
-import equilinox.VanillaComponent;
+import biomes.Biome;
 import equilinox.classification.Classifiable;
-import equilinox.classification.Family;
-import loom.Util;
+import equilinox.vanilla.VanillaColor;
+import equilinox.vanilla.VanillaComponent;
+import equilinox.vanilla.VanillaSpecie;
 import loom.component.PrintableComponent;
 import loom.entity.Entity;
 import loom.entity.living.*;
@@ -21,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static equilinox.VanillaComponent.*;
+import static equilinox.vanilla.VanillaComponent.*;
 
 /**
  * Within game files, entity blueprints are stored in a special format in which,
@@ -86,7 +87,7 @@ public final class EntityProcessor {
             throw new RuntimeException("Model from entity of id " + entity.getId() + " is null or empty.");
         }
 
-        if (Family.isIdAvailable(entity.getId())) {
+        if (VanillaSpecie.isIdAvailable(entity.getId())) {
             throw new RuntimeException("Id:" + entity.getId() + " is not available.");
         }
 
@@ -228,13 +229,26 @@ public final class EntityProcessor {
             if (floatList.get(i) > max) max = floatList.get(i);
         return max;
     }
-    
-    @SuppressWarnings("unchecked")
+
     public void buildFooter() {
+        buildVanillaComponents();
+
+        components.entrySet().stream()
+                .filter(e -> e.getValue() != null)
+                .filter(e -> e.getKey().getRequirements().stream().allMatch(entity::hasComponent))
+                .forEach(e -> addFooter(e.getKey().name() + (e.getValue().isEmpty() ? "" : ";" + e.getValue())));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void buildVanillaComponents() {
         if (entity instanceof BiomeSpreader) {
             BiomeSpreader spreader = (BiomeSpreader) entity;
-            components.put(SPREADER, spreader.biome() + ";0.1;0.1;0.1;" + spreader.strength() + ";"
-                    + spreader.distance());
+            try {
+                components.put(SPREADER, Biome.valueOf(spreader.biome().name()).ordinal() + ";0.1;0.1;0.1;"
+                        + spreader.strength() + ";" + spreader.distance());
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Biome " + spreader.biome().name() + " was not registered");
+            }
         }
         byAnnotation(PROJECTILE, Projectile.class);
         if (entity.getClass().isAnnotationPresent(Timeout.class))
@@ -252,7 +266,7 @@ public final class EntityProcessor {
             components.put(MATERIAL, ";" + join(entity.getSecondNaturalColor() != null,
                     PrintUtils.printArray(";", map.entrySet().toArray(new Map.Entry[0]), e -> {
                         Map.Entry<Color, Integer> entry = (Map.Entry<Color, Integer>) e;
-                        return Util.isVanilla(entry.getKey()) + ";" + entry.getValue();
+                        return VanillaColor.isVanilla(entry.getKey()) + ";" + entry.getValue();
                     })));
         }
         if (entity instanceof Tooltip) {
@@ -296,7 +310,7 @@ public final class EntityProcessor {
             components.put(BUILDER, ";" + join(builder.structure().getId(), builder.points(),
                     builder.structure() instanceof Entity
                             ? ((Entity) builder.structure()).hasComponent(PERCHER)
-                            : builder.structure().getId() == Family.NEST.getId(),
+                            : builder.structure().getId() == VanillaSpecie.NEST.getId(),
                     builder.buildTime(), (builder.age() - 1) / ((LivingEntity) entity).stages()) +
                     (builder.buildingHour() != 0 ? ";;" + builder.buildTime() : ""));
         }
@@ -328,11 +342,6 @@ public final class EntityProcessor {
                                 Classifiable::getClassification), predator.huntsYoung(), predator.huntsOld()));
             }
         }
-
-        components.entrySet().stream()
-                .filter(e -> e.getValue() != null)
-                .filter(e -> e.getKey().getRequirements().stream().allMatch(entity::hasComponent))
-                .forEach(e -> addFooter(e.getKey().name() + (e.getValue().isEmpty() ? "" : ";" + e.getValue())));
     }
 
     private void byAnnotation(VanillaComponent component, Class<? extends Annotation> annotation) {

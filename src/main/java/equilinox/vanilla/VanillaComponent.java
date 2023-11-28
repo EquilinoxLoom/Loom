@@ -1,4 +1,4 @@
-package equilinox;
+package equilinox.vanilla;
 
 import componentArchitecture.Component;
 import componentArchitecture.ComponentBundle;
@@ -6,7 +6,8 @@ import componentArchitecture.ComponentType;
 import loom.component.PrintableComponent;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public enum VanillaComponent implements PrintableComponent {
     TRANSFORM,
@@ -67,13 +68,13 @@ public enum VanillaComponent implements PrintableComponent {
     /**
      * List of components loaded at this component creation.
      */
-    private final List<PrintableComponent> requirements;
+    private final Set<PrintableComponent> requirements;
 
     VanillaComponent(VanillaComponent... requirements) {
-        this.requirements = Arrays.asList(requirements);
+        this.requirements = new HashSet<>(Arrays.asList(requirements));
     }
 
-    public List<PrintableComponent> getRequirements() {
+    public Set<PrintableComponent> getRequirements() {
         return requirements;
     }
 

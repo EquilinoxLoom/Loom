@@ -3,11 +3,13 @@
   "package": "equilinox.mixin",
   "minVersion": "0.7.10",
   "mixins": [
+    "MixinBiome",
     "MixinComponent",
     "MixinComponentType",
     "MixinFoodCompLoader",
     "MixinInformationComponentLoader",
     "MixinMainApp",
-    "MixinMyFile"
+    "MixinMyFile",
+    "MixinTempEatAnimBlueprint"
   ]
 }

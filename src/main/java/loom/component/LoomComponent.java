@@ -1,24 +1,32 @@
 package loom.component;
 
+import com.sun.istack.internal.Nullable;
+import componentArchitecture.Component;
 import componentArchitecture.*;
 import entityInfoGui.PopUpInfoGui;
-import equilinox.VanillaLoader;
 import equilinox.classification.Classifiable;
-import equilinox.classification.Specie;
+import equilinox.ducktype.ComponentReference;
+import equilinox.vanilla.Key;
+import equilinox.vanilla.VanillaColor;
+import gameManaging.GameManager;
+import instances.Entity;
 import javafx.util.Pair;
-import loom.entity.weaver.EntityComponent;
+import loom.entity.weaver.PrintUtils;
 import org.lwjgl.util.vector.Vector3f;
 import speciesInformation.SpeciesInfoType;
+import userInterfaces.TextStatInfo;
 import utils.BinaryReader;
 import utils.BinaryWriter;
 
+import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * The component responsible for adding specific behaviors, interactions, and actions to entities.
@@ -28,9 +36,9 @@ import java.util.Map;
  *
  * <p>
  * To add a new parameter to the custom component, users must create a constructor.
- * The allowable parameter types include integers, floats, integer arrays, float arrays, {@link Vector3f},
- * booleans, longs, enum values, {@link Classifiable}, {@link Specie},
- * or Strings (excluding semicolons).
+ * The allowable parameter types are: integers, floats, integer arrays, float arrays, {@link Vector3f}s,
+ * booleans, longs, enums, {@link Classifiable}s, strings (excluding semicolons),
+ * or also maps of allowable parameters as key and values.
  * </p>
  *
  * <p>
@@ -42,19 +50,38 @@ import java.util.Map;
 public abstract class LoomComponent extends Component implements ComponentReference, PrintableComponent {
     private final List<PopUpInfoGui> info = new ArrayList<>();
     private final List<Action> actions = new ArrayList<>();
+    private final List<ControlBehaviour> controllableBehaviours = new ArrayList<>();
+
+    private final Map<TextStatInfo, Predicate<LoomComponent>> performance = new HashMap<>();
+
+    private final boolean active;
+
+    final ComponentRequester requester = new ComponentRequester();
 
     private LoomBlueprint loader = null;
-    private List<PrintableComponent> requirements;
+    private Set<PrintableComponent> requirements;
 
     //TODO SUPPORT CUSTOM TABS
     final Map<SpeciesInfoType, Pair<String, String>> speciesInfo = new HashMap<>();
 
-    final ParamRegistry registry;
+    final ComponentParamRegistry registry;
 
     public LoomComponent() {
         super(null);
-        this.registry = new ParamRegistry(this);
+        this.registry = new ComponentParamRegistry(getClass());
         register(registry);
+        this.active = isUpdateOverridden();
+    }
+
+    private boolean isUpdateOverridden() {
+        try {
+            Method method = this.getClass().getDeclaredMethod("update", float.class);
+            Method superMethod = LoomComponent.class.getMethod("update", float.class);
+
+            return !superMethod.equals(method);
+        } catch (NoSuchMethodException e) {
+            return true;
+        }
     }
 
     @Override
@@ -67,24 +94,67 @@ public abstract class LoomComponent extends Component implements ComponentRefere
         actions.addAll(this.actions);
     }
 
-    protected final void addStatusInfo(PopUpInfoGui info) {
+    @Override
+    public final void getPerformanceBuffsInfo(List<TextStatInfo> info) {
+        performance.forEach((txt, func) -> {
+            if (func.test(this)) info.add(txt);
+        });
+    }
+
+    @Override
+    public final void getControlableBehaviour(List<ControlBehaviour> behaviours) {
+        behaviours.addAll(controllableBehaviours);
+    }
+
+    protected final void addToStatisticsInfoTab(PopUpInfoGui info) {
         this.info.add(info);
     }
 
-    protected final void addAction(Action action) {
+    protected final void addToActionInfoTab(Action action) {
         this.actions.add(action);
     }
 
-    protected final void addSpecieTabInfo(String label, String value) {
+    /**
+     * Adds information to the performance buffs information tab.
+     *
+     * @param name          The name of the performance buff.
+     * @param nameColor     The color of the name, or {@code null} for default color.
+     * @param value         The value associated with the performance buff.
+     * @param valueColor    The color of the value, or {@code null} for default color.
+     * @param description   The description of the performance buff.
+     * @param func          A function to determine if the performance buff is applicable to this {@link LoomComponent}.
+     *                      The function is checked every game tick to ensure the performance buff should be on.
+     */
+    protected final void addToPerformanceBuffsInfoTab(String name, @Nullable Color nameColor,
+                                                      String value, @Nullable Color valueColor,
+                                                      String description, Predicate<LoomComponent> func) {
+        if (nameColor == null) nameColor = Color.WHITE;
+        if (valueColor == null) valueColor = VanillaColor.BEIGE.color;
+        performance.put(new TextStatInfo(name, value,
+                VanillaColor.parseColor(nameColor),
+                VanillaColor.parseColor(valueColor),
+                description), func);
+    }
+
+    protected final void addToGeneralShopTab(String label, String value) {
         speciesInfo.put(SpeciesInfoType.GENERAL, new Pair<>(label, value));
     }
 
-    protected final void addHabitatTabInfo(String label, String value) {
+    protected final void addToHabitatShopTab(String label, String value) {
         speciesInfo.put(SpeciesInfoType.PREFERENCES, new Pair<>(label, value));
     }
 
-    protected final void addAbilitiesTabInfo(String label, String value) {
+    protected final void addToAbilitiesShopTab(String label, String value) {
         speciesInfo.put(SpeciesInfoType.ABILITIES, new Pair<>(label, value));
+    }
+
+    protected final void addControllableBehaviour(String name, Key key, Runnable run) {
+        controllableBehaviours.add(new ControlBehaviour(name, key.getOrdinal(), false) {
+            @Override
+            public void doAction() {
+                run.run();
+            }
+        });
     }
 
     @Override
@@ -92,7 +162,7 @@ public abstract class LoomComponent extends Component implements ComponentRefere
         for (Field field : registry.dynamicFields) {
             field.setAccessible(true);
             try {
-                if (!ParamRegistry.writeBinaryType(writer, field.get(this)))
+                if (!PrintUtils.writeBinaryType(writer, field.get(this)))
                     System.err.println("Field " + field.getName() + " is a type supported by the saving engine. " +
                             "Supported types are: integers, floats, longs, shorts, Vector3f's, booleans and strings.");
             } catch (IllegalAccessException e) {
@@ -103,22 +173,29 @@ public abstract class LoomComponent extends Component implements ComponentRefere
 
     @Override
     public void create(ComponentBundle bundle) {
-        ComponentRequester requester = new ComponentRequester(bundle);
-        create(requester);
+        requester.setBundle(bundle); create(requester);
         requirements = requester.requirements;
+        LoomParams params = (LoomParams) bundle.getParameters(this.getType());
+        if (params != null) params.getFields().forEach((f, o) -> {
+            try {
+                f.setAccessible(true);
+                f.set(this, o);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    protected abstract void create(ComponentRequester requester);
-    protected abstract void register(ParamRegistry registry);
-
-    public Object requestEntityComponentBlueprint(EntityComponent component) {
-        return VanillaLoader.getFunctionByClass(component.getClass());
+    @Override
+    public boolean reproduce(ParamsBundle params, boolean selected, Entity entity) {
+        params.addParams(new LoomParams(this));
+        return true;
     }
 
     @Override
     public void load(ComponentBundle bundle, BinaryReader reader) throws Exception {
         create(bundle); for (Field field : registry.dynamicFields) {
-            field.set(this, ParamRegistry.readBinaryType(reader, field.getType()));
+            field.set(this, PrintUtils.readBinaryType(reader, field.getType()));
         }
     }
 
@@ -126,7 +203,21 @@ public abstract class LoomComponent extends Component implements ComponentRefere
         return loader;
     }
 
-    public List<PrintableComponent> getRequirements() {
+    protected abstract void create(ComponentRequester requester);
+    protected abstract void register(ComponentParamRegistry registry);
+
+    /**
+     * Dynamic components can change the model of the entity constantly within runtime.
+     * Components like Animation, Movement and Flee are dynamic.
+     */
+    public abstract boolean isDynamic();
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    public Set<PrintableComponent> getRequirements() {
         return requirements;
     }
 
@@ -135,14 +226,41 @@ public abstract class LoomComponent extends Component implements ComponentRefere
         return (T) bundle.getComponent(getType());
     }
 
-    public final void setBlueprintType(ComponentType type) {
-        try {
-            this.loader = new LoomBlueprint(type, this);
-            this.getClass().getMethod("loom$setBlueprint", ComponentBlueprint.class).invoke(this, loader);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+    public final void setBlueprintType(ComponentType type) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        this.getClass().getMethod("loom$setBlueprint", ComponentBlueprint.class).invoke(this, (this.loader = new LoomBlueprint(type, this)));
     }
 
+    public final void update() {
+        this.update(GameManager.getGameSeconds());
+    }
+
+    /**
+     * This method is called about a hundred times a game second.
+     *
+     * @param delta Float representing a hundredth of a game second.
+     *              Used to increase or decrease variables in a countdown.
+     */
+    public void update(float delta) {}
+
     public void delete() {}
+
+    public static class LoomParams extends ComponentParams {
+        private final Map<Field, Object> fields;
+
+        public LoomParams(LoomComponent component) {
+            super(component.getType());
+            fields = component.registry.hereditaryFields.stream().collect(Collectors.toMap(f -> f, f -> {
+                try {
+                    f.setAccessible(true);
+                    return f.get(component);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }));
+        }
+
+        public Map<Field, Object> getFields() {
+            return fields;
+        }
+    }
 }

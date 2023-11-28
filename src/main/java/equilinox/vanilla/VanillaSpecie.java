@@ -1,10 +1,13 @@
-package equilinox.classification;
+package equilinox.vanilla;
+
+import equilinox.classification.Classifiable;
+import equilinox.classification.Specie;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static equilinox.classification.Order.*;
+import static equilinox.vanilla.VanillaClassification.*;
 
 /**
  * Enumeration representing various families of entities in the Equilinox classification system.
@@ -21,7 +24,7 @@ import static equilinox.classification.Order.*;
  * </p>
  */
 @SuppressWarnings("unused")
-public enum Family implements Specie {
+public enum VanillaSpecie implements Specie {
     @Deprecated TEST(HEAD),
     SHEEP(MEDIUM_HERBIVORE),
     OAK_TREE(WOODLAND_TREE),
@@ -32,7 +35,7 @@ public enum Family implements Specie {
     HEATHER(FLOWER),
     CHICKEN(SMALL_BIRD),
     BROWN_STONE(STONE),
-    FERN(Order.FERN),
+    FERN(VanillaClassification.FERN),
     WHEAT(GRASSES),
     TURTLE(REPTILE),
     KELP(WATER_PLANT),
@@ -40,7 +43,7 @@ public enum Family implements Specie {
     RED_FISH(SMALL_FISH),
     WATER_LILY(WATER_PLANT),
     SEAWEED(WATER_PLANT),
-    CACTUS(Order.CACTUS),
+    CACTUS(VanillaClassification.CACTUS),
     PRICKLY_PEAR(CACTUS),
     GRASS_TUFT(GRASSES),
     YUCCA(CACTUS),
@@ -49,7 +52,7 @@ public enum Family implements Specie {
     @Deprecated TEST_FIR_TREE(TREE),
     BIRCH_TREE(GRASS_TREE),
     PINK_TREE(LUSH_TREE),
-    PALM_TREE(Order.TROPICAL_TREE),
+    PALM_TREE(VanillaClassification.TROPICAL_TREE),
     TALL_TREE(FOREST_TREE),
     @Deprecated SNOW_WOLF(MEDIUM_HERBIVORE),
     CHERRY_TREE(LUSH_TREE),
@@ -65,11 +68,11 @@ public enum Family implements Specie {
     COCONUT(FRUIT),
     RABBIT(SMALL_HERBIVORE),
     RED_TREE(LUSH_TREE),
-    BANANA_TREE(Order.TROPICAL_TREE),
+    BANANA_TREE(VanillaClassification.TROPICAL_TREE),
     BANANA(FRUIT),
     CARROT(ROOT_VEGETABLE),
-    UMBRELLA_TREE(Order.DESERT_TREE),
-    ORANGE_TREE(Order.TROPICAL_TREE),
+    UMBRELLA_TREE(VanillaClassification.DESERT_TREE),
+    ORANGE_TREE(VanillaClassification.TROPICAL_TREE),
     ORANGE(FRUIT),
     SQUIRREL(SMALL_HERBIVORE),
     WILD_BOAR(MEDIUM_HERBIVORE),
@@ -116,7 +119,7 @@ public enum Family implements Specie {
     @Deprecated RACOON(MEDIUM_HERBIVORE),
     GOAT(MEDIUM_HERBIVORE),
     @Deprecated MONKEY(MEDIUM_HERBIVORE),
-    MANGO_TREE(Order.TROPICAL_TREE),
+    MANGO_TREE(VanillaClassification.TROPICAL_TREE),
     @Deprecated HORSE(MEDIUM_HERBIVORE),
     @Deprecated UNICORN(LARGE_HERBIVORE),
     @Deprecated TALL_DESERT_TREE(TREE),
@@ -126,12 +129,12 @@ public enum Family implements Specie {
     BARK(OTHER),
     BEAVER_LODGE(STRUCTURE),
     SNAP_DRAGON(FLOWER),
-    MEAT(Order.MEAT),
+    MEAT(VanillaClassification.MEAT),
     WILD_MINT(HERB),
     SAGE(HERB),
     OREGANO(HERB),
     ROSEMARY(HERB),
-    FLOWER_TREE(Order.TROPICAL_TREE),
+    FLOWER_TREE(VanillaClassification.TROPICAL_TREE),
     WILLOW_TREE(SWAMP_TREE),
     JUNGLE_FLOWER(FLOWER),
     ELM_TREE(WOODLAND_TREE),
@@ -144,7 +147,7 @@ public enum Family implements Specie {
     BUTTON_MUSHROOM(MUSHROOM),
     SMALL_CACTUS(CACTUS),
     GIANT_CACTUS(CACTUS),
-    DESERT_TREE(Order.DESERT_TREE),
+    DESERT_TREE(VanillaClassification.DESERT_TREE),
     JUNGLE_GRASS(GRASSES),
     FICUS_TREE(JUNGLE_TREE),
     CANOPY_TREE(JUNGLE_TREE),
@@ -160,7 +163,7 @@ public enum Family implements Specie {
     RED_MAPLE_TREE(GRASS_TREE),
     TROPICAL_SEAWEED(WATER_PLANT),
     NUT_TREE(WOODLAND_TREE),
-    NUT(Order.NUT),
+    NUT(VanillaClassification.NUT),
     BIRD_MEAT(MEAT),
     SMALL_MEAT(MEAT),
     MANGO(FRUIT),
@@ -207,13 +210,13 @@ public enum Family implements Specie {
     MARIGOLDS(FLOWER),
     DOLPHIN(BIG_FISH);
 
-    private static final List<Integer> ids = Arrays.stream(Family.values()).filter(family -> {
+    private static final List<Integer> ids = Arrays.stream(VanillaSpecie.values()).filter(specie -> {
         try {
-            return !Family.class.getField(family.name()).isAnnotationPresent(Deprecated.class);
+            return !VanillaSpecie.class.getField(specie.name()).isAnnotationPresent(Deprecated.class);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
-    }).map(Family::getId).collect(Collectors.toList());
+    }).map(VanillaSpecie::getId).collect(Collectors.toList());
 
     /**
      * Represents a cloud entity, belonging to the CLOUD super-order.
@@ -252,7 +255,7 @@ public enum Family implements Specie {
 
     private final Classifiable superOrder;
 
-    Family(Classifiable superOrder) {
+    VanillaSpecie(Classifiable superOrder) {
         this.superOrder = superOrder;
     }
 

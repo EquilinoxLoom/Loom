@@ -5,8 +5,8 @@ import loom.entity.weaver.PrintUtils;
 
 import java.awt.*;
 
-import static equilinox.VanillaComponent.FRUIT_FALL;
-import static equilinox.VanillaComponent.WOOD;
+import static equilinox.vanilla.VanillaComponent.FRUIT_FALL;
+import static equilinox.vanilla.VanillaComponent.WOOD;
 
 public abstract class TreeEntity extends PlantEntity {
     public TreeEntity(String name, int id, Evolution evolution, WellBeing satisfaction) {

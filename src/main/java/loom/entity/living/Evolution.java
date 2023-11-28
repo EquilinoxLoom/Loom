@@ -3,7 +3,7 @@ package loom.entity.living;
 import com.sun.istack.internal.NotNull;
 import equilinox.classification.Classifiable;
 import equilinox.classification.Specie;
-import loom.Util;
+import equilinox.vanilla.VanillaColor;
 import loom.entity.weaver.EntityComponent;
 
 import java.awt.*;
@@ -60,11 +60,11 @@ public class Evolution extends EntityComponent {
     }
 
     public void addNearbyColoredSpecieRequirement(@NotNull Classifiable classification, Color color) {
-        addEnvironmentRequirement(6, classification.getClassification(), Util.getClosestVanilla(color));
+        addEnvironmentRequirement(6, classification.getClassification(), VanillaColor.getClosestVanilla(color));
     }
 
     public void addColorRequirement(Color color) {
-        add("MATERIAL", Util.getClosestVanilla(color));
+        add("MATERIAL", VanillaColor.getClosestVanilla(color));
     }
 
     public void addSpeedRequirement(float targetSpeed) {
@@ -74,4 +74,10 @@ public class Evolution extends EntityComponent {
     public void addSizeRequirement(float targetSize) {
         add("TRANSFORM;" + targetSize);
     }
+
+    /*
+    public <T extends LoomComponent & ComponentEvolutionRequirement> void addCustomRequirement(T requirement) {
+        add(requirement.name() + ";" + requirement.evolutionRequirement().compile());
+    }
+     */
 }

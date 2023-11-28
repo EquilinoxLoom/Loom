@@ -2,7 +2,7 @@ package loom.entity.living;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
-import equilinox.VanillaComponent;
+import equilinox.vanilla.VanillaComponent;
 import food.FoodSectionType;
 import loom.entity.other.Particle;
 import loom.entity.weaver.PrintUtils;
@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static equilinox.VanillaComponent.PERCH;
+import static equilinox.vanilla.VanillaComponent.PERCH;
 
 @SuppressWarnings("unused")
 public abstract class PlantEntity extends LivingEntity {

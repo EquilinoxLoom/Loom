@@ -1,6 +1,6 @@
 package loom.entity;
 
-import equilinox.VanillaComponent;
+import equilinox.vanilla.VanillaComponent;
 import loom.entity.living.Tooltip;
 
 public abstract class StructureEntity extends LoomEntity implements Tooltip {

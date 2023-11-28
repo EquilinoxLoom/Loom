@@ -1,15 +1,14 @@
 package loom.entity.living;
 
+import biomes.Biome;
 import com.sun.istack.internal.NotNull;
 import equilinox.classification.Classifiable;
-import loom.IEnvironment;
+import equilinox.ducktype.BiomeReference;
 import loom.entity.weaver.EntityComponent;
 import loom.entity.weaver.PrintUtils;
 
 @SuppressWarnings("unused")
 public class WellBeing extends EntityComponent {
-
-
     @Override
     protected String getDelimiter() {
         return ";;";
@@ -25,14 +24,15 @@ public class WellBeing extends EntityComponent {
      *                      <STRONG>{@code True}</STRONG> for all grasses.
      */
     public WellBeing addSuitableBiomeFactor(float influence, boolean growsInBarren, float idealPercentage,
-                                            @NotNull IEnvironment... biomes) {
+                                            @NotNull BiomeReference... biomes) {
         add(2, growsInBarren, biomes.length == 0 ? "0" : PrintUtils.printArray(";", biomes,
-                biome -> String.valueOf(biome.getId())), idealPercentage, influence);
+                biome -> String.valueOf(Biome.valueOf(biome.name()).ordinal())), idealPercentage, influence);
         return this;
     }
 
-    public WellBeing addUnsuitableBiomeFactor(float influence, @NotNull IEnvironment... biomes) {
-        add(3, PrintUtils.printArray(";", biomes, biome -> String.valueOf(biome.getId())), influence);
+    public WellBeing addUnsuitableBiomeFactor(float influence, @NotNull BiomeReference... biomes) {
+        add(3, PrintUtils.printArray(";", biomes,
+                biome -> String.valueOf(Biome.valueOf(biome.name()).ordinal())), influence);
         return this;
     }
 

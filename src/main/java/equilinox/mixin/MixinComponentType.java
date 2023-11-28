@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +38,12 @@ public class MixinComponentType {
                 .forEach(component -> {
                     ComponentType type = newComponentType(component.name(), types.size(), component.getLoader(),
                             component.isActive(), component.isDynamic());
-                    types.add(type); component.setBlueprintType(type);
+                    types.add(type);
+                    try {
+                        component.setBlueprintType(type);
+                    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
         ENUM$VALUES = types.toArray(new ComponentType[0]);
     }

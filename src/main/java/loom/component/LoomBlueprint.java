@@ -2,9 +2,9 @@ package loom.component;
 
 import blueprints.Blueprint;
 import componentArchitecture.*;
-import equilinox.VanillaLoader;
 import equilinox.classification.Classifiable;
 import equilinox.classification.Specie;
+import equilinox.vanilla.VanillaLoader;
 import loom.entity.weaver.EntityComponent;
 import org.lwjgl.util.vector.Vector3f;
 import speciesInformation.SpeciesInfoLine;
@@ -13,10 +13,9 @@ import utils.CSVReader;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader {
@@ -25,6 +24,7 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
     public LoomBlueprint(ComponentType type, LoomComponent component) {
         super(type);
         this.component = component;
+        component.requester.traits.forEach((name, trait) -> addTrait(trait));
     }
 
     @Override
@@ -35,6 +35,13 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
             reader.getNextString(); params.put(label, readTextType(reader, type));
         });
 
+        component.registry.optionals.forEach((label, type) -> {
+            if (reader.isEndOfLine()) {
+                reader.getNextString();
+                if (reader.isEndOfLine()) params.put(label, readTextType(reader, type));
+            }
+        });
+
         for (Constructor<?> constructor : Arrays.stream(component.getClass().getConstructors())
                 .filter(constructor -> constructor.getParameterCount() == params.size()).collect(Collectors.toList())) {
             try {
@@ -42,14 +49,13 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
                 LoomComponent component = (LoomComponent) constructor.newInstance(params.values().toArray());
                 component.setBlueprintType(this.component.getType());
                 return component.getBlueprint();
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException ignored) {}
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {}
         }
         throw new RuntimeException("No constructors were found matching " + component.registry.params.values()
                 .stream().map(Class::getSimpleName).collect(Collectors.joining(", ",
                         component.getClass().getSimpleName() + "(", ") at " + component.getClass().getName())),
                 new IllegalArgumentException());
     }
-
 
     @SuppressWarnings("unchecked")
     public static <T extends Enum<T>> Object readTextType(CSVReader reader, Class<?> clazz) {
@@ -75,6 +81,20 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
         else if (EntityComponent.class.isAssignableFrom(clazz))
             return VanillaLoader.getFunctionByClass(clazz).apply(reader);
         else if (clazz.isEnum()) return Enum.valueOf((Class<T>) clazz, reader.getNextString());
+        else if (clazz.isArray() && clazz.getComponentType() != null && clazz.getComponentType().isEnum()) {
+            int count = reader.getNextInt();
+            Enum<?>[] array = new Enum[count];
+            for (int i = 0; i < count; ++i) array[i] = Enum.valueOf((Class<T>) clazz, reader.getNextString());
+            return array;
+        }
+        else if (clazz.getGenericSuperclass() instanceof ParameterizedType
+                && ((ParameterizedType) clazz.getGenericSuperclass()).getRawType() == Map.class) {
+            Type[] types = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments();
+            int count = reader.getNextInt();
+            Map<Object, Object> map = new HashMap<>();
+            for (int i = 0; i < count; ++i) map.put(readTextType(reader, types[0].getClass()), readTextType(reader, types[1].getClass()));
+            return map;
+        }
         else return reader.getNextString();
     }
 

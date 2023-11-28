@@ -1,7 +1,9 @@
-package equilinox.classification;
+package equilinox.vanilla;
+
+import equilinox.classification.Classifiable;
 
 /**
- * Enumeration representing various orders of entities in the Equilinox classification system.
+ * Enum representing various orders of entities in the Equilinox classification system.
  * Each family is associated with a specific parent, indicating its broader classification.
  *
  * <p>
@@ -9,7 +11,7 @@ package equilinox.classification;
  * they are hollow files within the game files that aren't supposed to be loaded in the game.
  * </p>
  */
-public enum Order implements Classifiable {
+public enum VanillaClassification implements Classifiable {
     PLANT('p', HEAD),
     ANIMAL('a', HEAD),
     NON_LIVING('e', HEAD),
@@ -78,7 +80,7 @@ public enum Order implements Classifiable {
     final char c;
     private final Classifiable parent;
 
-    Order(char c, Classifiable parent) {
+    VanillaClassification(char c, Classifiable parent) {
         this.c = c;
         this.parent = parent;
     }

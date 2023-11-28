@@ -18,6 +18,10 @@ public interface Classifiable {
         public String getNode() {
             return "";
         }
+
+        public boolean belongs(Classifiable classifiable) {
+            return this.equals(classifiable);
+        }
     };
 
     /**
@@ -44,5 +48,9 @@ public interface Classifiable {
     default String getClassification() {
         if (this == HEAD) return "";
         return getLineage().getClassification() + getNode();
+    }
+
+    default boolean belongs(Classifiable classifiable) {
+        return equals(classifiable) || classifiable.belongs(this);
     }
 }

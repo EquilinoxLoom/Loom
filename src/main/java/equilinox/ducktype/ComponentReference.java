@@ -1,8 +1,9 @@
-package loom.component;
+package equilinox.ducktype;
 
 import componentArchitecture.Component;
 import componentArchitecture.ComponentLoader;
 import componentArchitecture.ComponentType;
+import loom.component.LoomBlueprint;
 
 /**
  * Used to duck type {@link ComponentType}, implementing its methods.
