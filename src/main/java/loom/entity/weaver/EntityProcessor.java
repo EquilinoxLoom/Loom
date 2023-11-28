@@ -284,9 +284,9 @@ public final class EntityProcessor {
                             + IntStream.range(0, factors.length).mapToDouble(i -> factors[i]).mapToObj(String::valueOf)
                             .collect(Collectors.joining(";")) : ""),
                     life.breedingMaturity(), life.breedingCooldown());
-            if (life.evolution == null) print1.addSub("-1;" + life.getDeath().build(), life.satisfaction.build());
-            else print1.addSub(life.evolution.parent, life.evolution.points, life.evolution.build() + ";" +
-                    life.getDeath().build(), life.satisfaction.build());
+            if (life.getEvolution() == null) print1.addSub("-1;" + life.getDeath().build(), life.getWellBeing().build());
+            else print1.addSub(life.getEvolution().parent, life.getEvolution().points,
+                    life.getEvolution().build() + ";" + life.getDeath().build(), life.getWellBeing().build());
             if (life.getDefense() != 0) print1.addSub(life.getDefense());
             components.put(LIFE, print1.build());
 

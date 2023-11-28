@@ -1,7 +1,6 @@
 package loom.entity.living;
 
 import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import equilinox.classification.Classifiable;
 import equilinox.classification.Specie;
 import equilinox.vanilla.VanillaComponent;
@@ -11,11 +10,8 @@ import loom.entity.weaver.PrintUtils;
 public abstract class AnimalEntity extends LivingEntity {
     protected final int id;
 
-    public AnimalEntity(String name, int id,
-                        @NotNull Movement movement,
-                        @Nullable Evolution evolution,
-                        @NotNull WellBeing satisfaction) {
-        super(name, id, Death.newFallDeath(1.5f, 2.5f, 60), evolution, satisfaction);
+    public AnimalEntity(String name, int id, @NotNull Movement movement) {
+        super(name, id, Death.newFallDeath(1.5f, 2.5f, 60));
         this.components.put(VanillaComponent.MOVEMENT, movement.build());
         this.components.put(VanillaComponent.AI, goesOverwater() ? (goesUnderwater() ? "PATROL_WITH_SWIM" : "PATROL")
                 : "SWIM");

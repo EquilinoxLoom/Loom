@@ -4,6 +4,7 @@
   "minVersion": "0.7.10",
   "mixins": [
     "MixinBiome",
+    "MixinBlueprintRepository",
     "MixinComponent",
     "MixinComponentType",
     "MixinFoodCompLoader",

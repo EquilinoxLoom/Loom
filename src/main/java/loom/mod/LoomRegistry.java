@@ -7,6 +7,8 @@ import equilinox.classification.Specie;
 import equilinox.ducktype.BiomeReference;
 import loom.CustomEatingAnimation;
 import loom.component.LoomComponent;
+import loom.entity.Entity;
+import loom.entity.LoomEntity;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -55,5 +57,9 @@ public class LoomRegistry {
             throw new RuntimeException(e);
         }
         return classifiable;
+    }
+
+    public void registerEntity(Entity entity) {
+        mod.ENTITIES.put(entity.getId(), entity);
     }
 }

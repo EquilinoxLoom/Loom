@@ -1,10 +1,8 @@
 package loom;
 
 import equilinoxmodkit.mod.ModInfo;
-import equilinoxmodkit.mod.PreInitializer;
 import loom.mod.LoomMod;
 import loom.mod.LoomRegistry;
-import org.spongepowered.asm.mixin.Mixins;
 
 @ModInfo(
         id = "equilinox.loom",
@@ -16,13 +14,7 @@ import org.spongepowered.asm.mixin.Mixins;
 )
 public class Loom extends LoomMod {
     @Override
-    public void preInit(PreInitializer pInit) {
-        Mixins.addConfiguration("mixins.loom.json");
-    }
-
-    @Override
-    public void postRegistry() {
-    }
+    public void postRegistry() {}
 
     @Override
     public void registry(LoomRegistry registry) {}

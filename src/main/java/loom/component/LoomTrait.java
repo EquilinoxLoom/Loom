@@ -23,9 +23,10 @@ public class LoomTrait extends FloatTrait {
         double m0 = 9e4;
         double m1 = 2.13e9 * 1200;
 
-        this.x = (int) (Math.log(d / 2 - Math.sqrt(
-                m0 * Math.pow(d, 2) + m1 * (d / t) - m1 * d - 4 * m0 * (d * t) + 1200
-        ) / 600.0) / Math.log(t));
+        double delta = Math.abs(m0 * Math.pow(d, 2) + m1 * (d / t) - m1 * d - 4 * m0 * (d * t) + 1200);
+        double x1 = (int) (Math.log(d / 2 - Math.sqrt(delta) / 600.0) / Math.log(t));
+        double x2 = (int) (Math.log(d / 2 + Math.sqrt(delta) / 600.0) / Math.log(t));
+        this.x = (int) (Double.isNaN(x1) ? x2 : x1);
     }
 
     /**

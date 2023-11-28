@@ -81,12 +81,12 @@ public class PrintUtils {
      * In particular, an {@code IOException} may be thrown if the output stream has been closed.
      */
     public static <T> boolean writeBinaryType(BinaryWriter writer, T value) throws IOException {
-        if (value instanceof Integer) writer.writeInt((int) value);
-        else if (value instanceof Float) writer.writeFloat((float) value);
-        else if (value instanceof Long) writer.writeLong((long) value);
-        else if (value instanceof Short) writer.writeShort((short) value);
+        if (value instanceof Integer) writer.writeInt((Integer) value);
+        else if (value instanceof Float) writer.writeFloat((Float) value);
+        else if (value instanceof Long) writer.writeLong((Long) value);
+        else if (value instanceof Short) writer.writeShort((Short) value);
         else if (value instanceof Vector3f) writer.writeVector((Vector3f) value);
-        else if (value instanceof Boolean) writer.writeBoolean((boolean) value);
+        else if (value instanceof Boolean) writer.writeBoolean((Boolean) value);
         else if (value instanceof String) writer.writeString((String) value);
         else return false;
         return true;

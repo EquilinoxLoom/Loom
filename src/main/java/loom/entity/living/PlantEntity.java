@@ -1,7 +1,5 @@
 package loom.entity.living;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 import equilinox.vanilla.VanillaComponent;
 import food.FoodSectionType;
 import loom.entity.other.Particle;
@@ -15,8 +13,8 @@ import static equilinox.vanilla.VanillaComponent.PERCH;
 
 @SuppressWarnings("unused")
 public abstract class PlantEntity extends LivingEntity {
-    public PlantEntity(String name, int id, @Nullable Evolution evolution, @NotNull WellBeing satisfaction) {
-        super(name, id, Death.newFadeDeath(0.5f), evolution, satisfaction);
+    public PlantEntity(String name, int id) {
+        super(name, id, Death.newFadeDeath(0.5f));
     }
 
     public void setParticles(Particle particle, float range, int[] stages, boolean usesPlantColor) {
