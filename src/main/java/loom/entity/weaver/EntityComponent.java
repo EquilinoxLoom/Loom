@@ -15,21 +15,21 @@ public abstract class EntityComponent {
     }
 
     public void add(Object... os) {
-        print.add(PrintUtils.print(";;", os));
+        print.add(EntityPrint.print(";;", os));
     }
 
     public void addSub(Object... os) {
-        print.add(PrintUtils.print(";;", os));
+        print.add(EntityPrint.print(";;", os));
     }
 
     public String build() {
-        if (!printSub.isEmpty()) print.add(PrintUtils.print(";;", printSub.toArray()));
+        if (!printSub.isEmpty()) print.add(EntityPrint.print(";;", printSub.toArray()));
 
         String build;
 
         if (print.isEmpty()) build = "0";
         else if (print.size() == 1) build = getDelimiter() + print.get(0);
-        else build = PrintUtils.printArray(getDelimiter(), print.toArray(new String[0]), s -> s);
+        else build = EntityPrint.printArray(getDelimiter(), print.toArray(new String[0]), s -> s);
 
         print.clear();
         printSub.clear();

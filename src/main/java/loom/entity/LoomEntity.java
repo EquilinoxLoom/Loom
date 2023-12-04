@@ -1,15 +1,15 @@
 package loom.entity;
 
 import com.sun.istack.internal.NotNull;
-import equilinox.ducktype.ComponentReference;
-import equilinox.ducktype.SoundReference;
-import equilinox.vanilla.VanillaComponent;
 import food.FoodSectionType;
 import loom.component.PrintableComponent;
-import loom.entity.living.Death;
-import loom.entity.other.Particle;
+import loom.entity.life.Death;
+import loom.entity.system.Particles;
+import loom.entity.weaver.EntityPrint;
 import loom.entity.weaver.EntityProcessor;
-import loom.entity.weaver.PrintUtils;
+import loom.equilinox.ducktype.ComponentReference;
+import loom.equilinox.ducktype.SoundReference;
+import loom.equilinox.vanilla.VanillaComponent;
 
 import java.awt.*;
 import java.util.List;
@@ -23,7 +23,7 @@ public abstract class LoomEntity implements Entity {
 
     protected final List<ComponentReference> componentReferences = new ArrayList<>();
 
-    final EntityProcessor processor;
+    EntityProcessor processor;
 
     final int id;
 
@@ -94,7 +94,7 @@ public abstract class LoomEntity implements Entity {
 
     public void setRandomSounder(float minCooldown, float maxCooldown, int range, @NotNull SoundReference... sounds) {
         components.put(VanillaComponent.SOUND, "");
-        components.put(VanillaComponent.RANDOM_SOUNDER, PrintUtils.print(";", minCooldown, maxCooldown, sounds.length,
+        components.put(VanillaComponent.RANDOM_SOUNDER, EntityPrint.print(";", minCooldown, maxCooldown, sounds.length,
                 Arrays.stream(sounds).map(SoundReference::id).collect(Collectors.joining(";" + range + ";")), range));
     }
 
@@ -114,8 +114,8 @@ public abstract class LoomEntity implements Entity {
 
     protected void setEdibleAsWhole(int points) {
         foodInfo.computeIfAbsent(FoodSectionType.WHOLE, type -> "EMBROIDER-" + type.name() + ";" + points + ";" +
-                Death.newParticleDeath(new Particle(getMaterials().keySet().iterator().next(), false, 0.1f, 0.8f,
-                        Particle.newPoint(), 8, 0.6f, 0.2f, 0.5f, 0.05f, 0, 0, 0, 0.4f, 0.1f, 0.1f)
+                Death.newParticleDeath(new Particles(getMaterials().keySet().iterator().next(), false, 0.1f, 0.8f,
+                        Particles.newPoint(), 8, 0.6f, 0.2f, 0.5f, 0.05f, 0, 0, 0, 0.4f, 0.1f, 0.1f)
                         .setDirection(0, 1, 0, 0.3f)).build());
     }
 
@@ -144,8 +144,6 @@ public abstract class LoomEntity implements Entity {
     }
 
     public String build() {
-        processor.buildFooter();
-        processor.buildFooter();
         return processor.build();
     }
 

@@ -4,14 +4,15 @@ import com.sun.istack.internal.Nullable;
 import componentArchitecture.Component;
 import componentArchitecture.*;
 import entityInfoGui.PopUpInfoGui;
-import equilinox.classification.Classifiable;
-import equilinox.ducktype.ComponentReference;
-import equilinox.vanilla.Key;
-import equilinox.vanilla.VanillaColor;
 import gameManaging.GameManager;
 import instances.Entity;
-import javafx.util.Pair;
-import loom.entity.weaver.PrintUtils;
+import loom.LoomMod;
+import loom.entity.Classifiable;
+import loom.entity.weaver.EntityPrint;
+import loom.equilinox.EvolutionRequirement;
+import loom.equilinox.ducktype.ComponentReference;
+import loom.equilinox.vanilla.Key;
+import loom.equilinox.vanilla.VanillaColor;
 import org.lwjgl.util.vector.Vector3f;
 import speciesInformation.SpeciesInfoType;
 import userInterfaces.TextStatInfo;
@@ -56,13 +57,15 @@ public abstract class LoomComponent extends Component implements ComponentRefere
 
     private final boolean active;
 
+    final List<EvolutionRequirement> evolutionRequirements = new ArrayList<>();
+
     final ComponentRequester requester = new ComponentRequester();
 
     private LoomBlueprint loader = null;
     private Set<PrintableComponent> requirements;
 
-    //TODO SUPPORT CUSTOM TABS
-    final Map<SpeciesInfoType, Pair<String, String>> speciesInfo = new HashMap<>();
+    /*TODO SUPPORT CUSTOM TABS*/
+    final Map<SpeciesInfoType, String> speciesInfo = new HashMap<>();
 
     final ComponentParamRegistry registry;
 
@@ -137,23 +140,20 @@ public abstract class LoomComponent extends Component implements ComponentRefere
     }
 
     protected final void addToGeneralShopTab(String label, String value) {
-        speciesInfo.put(SpeciesInfoType.GENERAL, new Pair<>(label, value));
+        speciesInfo.put(SpeciesInfoType.GENERAL, label + LoomMod.MOD_POINTER + value);
     }
 
     protected final void addToHabitatShopTab(String label, String value) {
-        speciesInfo.put(SpeciesInfoType.PREFERENCES, new Pair<>(label, value));
+        speciesInfo.put(SpeciesInfoType.PREFERENCES, label + LoomMod.MOD_POINTER + value);
     }
 
     protected final void addToAbilitiesShopTab(String label, String value) {
-        speciesInfo.put(SpeciesInfoType.ABILITIES, new Pair<>(label, value));
+        speciesInfo.put(SpeciesInfoType.ABILITIES, label + LoomMod.MOD_POINTER + value);
     }
 
     protected final void addControllableBehaviour(String name, Key key, Runnable run) {
         controllableBehaviours.add(new ControlBehaviour(name, key.getOrdinal(), false) {
-            @Override
-            public void doAction() {
-                run.run();
-            }
+            @Override public void doAction() { run.run(); }
         });
     }
 
@@ -162,7 +162,7 @@ public abstract class LoomComponent extends Component implements ComponentRefere
         for (Field field : registry.dynamicFields) {
             field.setAccessible(true);
             try {
-                if (!PrintUtils.writeBinaryType(writer, field.get(this)))
+                if (!EntityPrint.writeBinaryType(writer, field.get(this)))
                     System.err.println("Field " + field.getName() + " is a type supported by the saving engine. " +
                             "Supported types are: integers, floats, longs, shorts, Vector3f's, booleans and strings.");
             } catch (IllegalAccessException e) {
@@ -195,7 +195,7 @@ public abstract class LoomComponent extends Component implements ComponentRefere
     @Override
     public void load(ComponentBundle bundle, BinaryReader reader) throws Exception {
         create(bundle); for (Field field : registry.dynamicFields) {
-            field.set(this, PrintUtils.readBinaryType(reader, field.getType()));
+            field.set(this, EntityPrint.readBinaryType(reader, field.getType()));
         }
     }
 
@@ -226,8 +226,14 @@ public abstract class LoomComponent extends Component implements ComponentRefere
         return (T) bundle.getComponent(getType());
     }
 
-    public final void setBlueprintType(ComponentType type) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        this.getClass().getMethod("loom$setBlueprint", ComponentBlueprint.class).invoke(this, (this.loader = new LoomBlueprint(type, this)));
+    public final void setBlueprintType(ComponentType type) {
+        try {
+            Method setBlueprint = this.getClass().getMethod("loom$setBlueprint", ComponentBlueprint.class);
+            setBlueprint.setAccessible(true);
+            setBlueprint.invoke(this, (this.loader = new LoomBlueprint(type, this)));
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public final void update() {
@@ -243,6 +249,10 @@ public abstract class LoomComponent extends Component implements ComponentRefere
     public void update(float delta) {}
 
     public void delete() {}
+
+    public void addEvolutionRequirement(EvolutionRequirement req) {
+        this.evolutionRequirements.add(req);
+    }
 
     public static class LoomParams extends ComponentParams {
         private final Map<Field, Object> fields;

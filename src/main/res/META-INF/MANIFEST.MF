@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: 
-Class-Path: mixin-0.8.5.jar asm-all-3.3.1.jar EquilinoxWindows.jar mixin
- -0.8.5-javadoc.jar mixin-0.8.5-sources.jar commons-lang3-3.13.0.jar mix
- in-0.8.5-processor.jar equilinox-mod-kit-0.4.2.jar equilinox-mod-kit-0.
- 4.2-javadoc.jar equilinox-mod-kit-0.4.2-sources.jar
-

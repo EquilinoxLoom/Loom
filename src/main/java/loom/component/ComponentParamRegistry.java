@@ -1,10 +1,12 @@
 package loom.component;
 
+import loom.LoomMod;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComponentParamRegistry extends ParamRegistry {
+public class ComponentParamRegistry extends LoomMod.ParamRegistry {
     /** A list to store dynamic fields that can be saved and loaded dynamically. */
     final List<Field> dynamicFields = new ArrayList<>();
 
