@@ -1,11 +1,16 @@
 package loom.component;
 
 import blueprints.Blueprint;
+import breedingTrees.ReqInfo;
 import componentArchitecture.*;
-import equilinox.classification.Classifiable;
-import equilinox.classification.Specie;
-import equilinox.vanilla.VanillaLoader;
+import instances.Entity;
+import loom.LoomMod;
+import loom.entity.Classifiable;
+import loom.entity.Specie;
 import loom.entity.weaver.EntityComponent;
+import loom.equilinox.EvolutionRequirement;
+import loom.equilinox.vanilla.VanillaColor;
+import loom.equilinox.vanilla.VanillaLoader;
 import org.lwjgl.util.vector.Vector3f;
 import speciesInformation.SpeciesInfoLine;
 import speciesInformation.SpeciesInfoType;
@@ -29,31 +34,61 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
 
     @Override
     public ComponentBlueprint load(CSVReader reader, Blueprint blueprint) {
+        LoomComponent loom = (LoomComponent) readRegistry(component.registry, reader);
+        loom.setBlueprintType(component.getType());
+        return component.getBlueprint();
+    }
+
+    @Override
+    public Requirement loadRequirement(CSVReader reader) {
+        Class<? extends EvolutionRequirement> evReq = ((EvolutionRequirement) component.evolutionRequirements.stream()
+                .filter(ev -> ev.check(component.requester))
+                .toArray()[0]).getClass();
+        final EvolutionRequirement req = (EvolutionRequirement) readRegistry(new LoomMod.ParamRegistry(evReq), reader);
+        return new Requirement() {
+            @Override
+            public boolean check(Entity entity) {
+                ComponentRequester requester = new ComponentRequester();
+                requester.setBundle(new ComponentBundle(entity));
+                return req.check(requester);
+            }
+
+            @Override
+            public void getGuiInfo(List<ReqInfo> list) {
+                list.add(new ReqInfo(req.name(), req.value(), VanillaColor.parseColor(req.color())));
+            }
+
+            @Override
+            public boolean isSecret() {
+                return req.isSecret();
+            }
+        };
+    }
+
+    public static Object readRegistry(LoomMod.ParamRegistry registry, CSVReader reader, Constructor<?>... constructors) {
         LinkedHashMap<String, Object> params = new LinkedHashMap<>();
 
-        component.registry.params.forEach((label, type) -> {
+        registry.getParams().forEach((label, type) -> {
             reader.getNextString(); params.put(label, readTextType(reader, type));
         });
 
-        component.registry.optionals.forEach((label, type) -> {
+        registry.getOptionals().forEach((label, type) -> {
             if (reader.isEndOfLine()) {
                 reader.getNextString();
                 if (reader.isEndOfLine()) params.put(label, readTextType(reader, type));
             }
         });
 
-        for (Constructor<?> constructor : Arrays.stream(component.getClass().getConstructors())
+        for (Constructor<?> constructor : Arrays.stream(constructors)
                 .filter(constructor -> constructor.getParameterCount() == params.size()).collect(Collectors.toList())) {
             try {
                 constructor.setAccessible(true);
-                LoomComponent component = (LoomComponent) constructor.newInstance(params.values().toArray());
-                component.setBlueprintType(this.component.getType());
-                return component.getBlueprint();
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {}
+                return constructor.newInstance(params.values().toArray());
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException ignored) {}
         }
-        throw new RuntimeException("No constructors were found matching " + component.registry.params.values()
+        throw new RuntimeException("INTERNAL ERROR: No constructors were found matching " + registry.getParams().values()
                 .stream().map(Class::getSimpleName).collect(Collectors.joining(", ",
-                        component.getClass().getSimpleName() + "(", ") at " + component.getClass().getName())),
+                        constructors.getClass().getSimpleName() + "(", ") at " + constructors.getClass().getName())),
                 new IllegalArgumentException());
     }
 
@@ -99,11 +134,6 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
     }
 
     @Override
-    public Requirement loadRequirement(CSVReader csvReader) {
-        return null;
-    }
-
-    @Override
     public Component createInstance() {
         return component;
     }
@@ -115,7 +145,9 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
 
     @Override
     public void getInfo(Map<SpeciesInfoType, List<SpeciesInfoLine>> map) {
-        component.speciesInfo.forEach((type, pair) -> map.get(type)
-                .add(new SpeciesInfoLine(pair.getKey(), pair.getValue())));
+        component.speciesInfo.forEach((type, value) -> {
+            String[] line = value.split(LoomMod.MOD_POINTER);
+            map.get(type).add(new SpeciesInfoLine(line[0], line[1]));
+        });
     }
 }

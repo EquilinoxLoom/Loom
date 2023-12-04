@@ -1,28 +1,39 @@
 package loom.entity.weaver;
 
 import biomes.Biome;
-import equilinox.classification.Classifiable;
-import equilinox.vanilla.VanillaColor;
-import equilinox.vanilla.VanillaComponent;
-import equilinox.vanilla.VanillaSpecie;
+import loom.LoomMod;
 import loom.component.PrintableComponent;
+import loom.entity.Classifiable;
 import loom.entity.Entity;
-import loom.entity.living.*;
-import loom.entity.other.*;
-import loom.mod.LoomMod;
+import loom.entity.Tooltip;
+import loom.entity.behaviour.*;
+import loom.entity.item.Timeout;
+import loom.entity.life.Living;
+import loom.entity.life.LivingEntity;
+import loom.entity.other.Named;
+import loom.entity.other.Peacock;
+import loom.entity.other.Stinger;
+import loom.entity.plant.BiomeSpreader;
+import loom.entity.plant.FloaterPlant;
+import loom.entity.plant.Flytrap;
+import loom.entity.plant.Sunflower;
+import loom.entity.structure.Projectile;
+import loom.equilinox.vanilla.VanillaColor;
+import loom.equilinox.vanilla.VanillaComponent;
+import loom.equilinox.vanilla.VanillaSpecie;
 
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static equilinox.vanilla.VanillaComponent.*;
+import static loom.equilinox.vanilla.VanillaComponent.*;
 
 /**
  * Within game files, entity blueprints are stored in a special format in which,
@@ -54,18 +65,12 @@ public final class EntityProcessor {
     }
 
     public String build() {
-        buildHeader();
-        buildBody();
-        buildFooter();
-        return String.join(";;", header) + "\n" + String.join("", body) + "\n" + String.join("\n", footer);
+        buildHeader(); buildBody(); buildFooter();
+        return String.join("\n", header) + "\n" + String.join("", body) + String.join("\n", footer);
     }
 
     private String join(Object... os) {
-        return PrintUtils.print(";;", os);
-    }
-
-    private void addHeader(Object... os) {
-        header.add(join(os));
+        return EntityPrint.print(";;", os);
     }
 
     private void addFooter(String str) {
@@ -73,13 +78,13 @@ public final class EntityProcessor {
     }
 
     public void buildHeader() {
-        addHeader(entity.getSize());
-        if (entity.isModelRandomized()) addHeader(-1, -1, 1);
-        if (entity.getIconSize() != 1) addHeader(0, entity.getIconSize());
-        if (entity.getIconHeight() != 0) addHeader(entity.getIconHeight() + "\n");
-        addHeader(entity.getLineage().getClassification() + "\n");
-        addHeader((entity.goesUnderwater()) + ";" + (entity.goesOverwater()));
-        if (entity.getWaterHeightRequired() != 0) addHeader(entity.getWaterHeightRequired());
+        header.add(String.valueOf(entity.getSize()));
+        if (entity.isModelRandomized()) header.add("-1;;-1;;1");
+        if (entity.getIconSize() != 1) header.add("0;;" + entity.getIconSize());
+        if (entity.getIconHeight() != 0) header.add(String.valueOf(entity.getIconHeight()));
+        header.add(entity.getLineage().getClassification());
+        header.add((entity.goesUnderwater() ? 1 : 0) + ";" + (entity.goesOverwater() ? 1 : 0));
+        if (entity.getWaterHeightRequired() != 0) header.add(String.valueOf(entity.getWaterHeightRequired()));
     }
 
     public void buildBody() {
@@ -91,21 +96,7 @@ public final class EntityProcessor {
             throw new RuntimeException("Id:" + entity.getId() + " is not available.");
         }
 
-        final List<List<List<String>>> model = new ArrayList<>();
-
-        for (String stage : entity.getModelPaths()) {
-            List<List<String>> lists = new ArrayList<>();
-            try {
-                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-                lists.add(Files.readAllLines(Paths.get(Objects.requireNonNull(classloader.getResource(stage + ".obj")).toURI())));
-                lists.add(Files.readAllLines(Paths.get(Objects.requireNonNull(classloader.getResource(stage + ".mtl")).toURI())));
-            } catch (NullPointerException e) {
-                System.err.println("Couldn't find " + stage + ".obj and " + stage + ".mtl at resources folder.");
-            } catch (URISyntaxException | IOException e) {
-                throw new RuntimeException(e);
-            }
-            model.add(lists);
-        }
+        final List<List<List<String>>> model = loadModel();
 
         List<List<Integer>> pointerLists = new ArrayList<>();
         List<List<String>> faceLists = new ArrayList<>();
@@ -141,14 +132,7 @@ public final class EntityProcessor {
                         faces.add("POINTER");
                         pointers.add(counter);
 
-                        for (String mtl : mtlLines) {
-                            String[] mtlSplit = mtl.split(" ");
-                            if (mtlSplit[0].equals("Kd")) {
-                                colours.add(Float.parseFloat(mtlSplit[1]));
-                                colours.add(Float.parseFloat(mtlSplit[2]));
-                                colours.add(Float.parseFloat(mtlSplit[3]));
-                            }
-                        }
+                        loadMtl(mtlLines, colours);
                         break;
                     case "f":
                         faces.add(objSplit[1]);
@@ -161,11 +145,7 @@ public final class EntityProcessor {
 
             pointers.add(counter);
 
-            if (!entity.getMaterials().isEmpty() && !(entity.hasEggStage() && stage.equals(model.get(0)))) {
-                for (int i = 0; i < colours.size(); i += 6) {
-                    colours.set(i, -1F); colours.set(i + 1, 0F); colours.set(i + 2, 0F);
-                }
-            }
+            setNoMaterial(stage, model, colours);
 
             pointerLists.add(pointers);
             faceLists.add(faces);
@@ -174,8 +154,9 @@ public final class EntityProcessor {
             colourLists.add(colours);
         }
 
+        body.add(entity.getModelPaths().length + "\n");
         for (int i = 0; i < pointerLists.size(); i++) {
-            body.add(PrintUtils.print(";",
+            body.add(EntityPrint.print(";",
                     String.format(Locale.US, "%.4f", getMin(vertexLists.get(i), 0)),
                     String.format(Locale.US, "%.4f", getMin(vertexLists.get(i), 1)),
                     String.format(Locale.US, "%.4f", getMin(vertexLists.get(i), 2)),
@@ -193,7 +174,7 @@ public final class EntityProcessor {
                     String[] convertedFaces = faceLists.get(i).get(j).split("/");
                     int faces0 = Integer.parseInt(convertedFaces[0]) - 1;
                     int faces1 = Integer.parseInt(convertedFaces[2]) - 1;
-                    body.add(PrintUtils.print(";",
+                    body.add(EntityPrint.print(";",
                             String.format(Locale.US, "%.4f", vertexLists.get(i).get(faces0 * 3)),
                             String.format(Locale.US, "%.4f", vertexLists.get(i).get(faces0 * 3 + 1)),
                             String.format(Locale.US, "%.4f", vertexLists.get(i).get(faces0 * 3 + 2)),
@@ -204,7 +185,7 @@ public final class EntityProcessor {
                 }
 
                 if (faceLists.get(i).get(j).contains("POINTER")) {
-                    body.add(PrintUtils.print(";", "\n" +
+                    body.add(EntityPrint.print(";", "\n" +
                             (pointerLists.get(i).get(k) - pointerLists.get(i).get(k - 1)),
                             colourLists.get(i).get(point * 3).toString(),
                             colourLists.get(i).get(point * 3 + 1).toString(),
@@ -215,6 +196,64 @@ public final class EntityProcessor {
             body.add("\n");
         }
     }
+
+    private void setNoMaterial(List<List<String>> stage, List<List<List<String>>> model, List<Float> colours) {
+        if (!entity.getMaterials().isEmpty() && !(entity.hasEggStage() && stage.equals(model.get(0)))) {
+            for (int i = 0; i < colours.size(); i += 6) {
+                colours.set(i, -1F); colours.set(i + 1, 0F); colours.set(i + 2, 0F);
+            }
+        }
+    }
+
+    private static void loadMtl(List<String> mtlLines, List<Float> colours) {
+        for (String mtl : mtlLines) {
+            String[] mtlSplit = mtl.split(" ");
+            if (mtlSplit[0].equals("Kd")) {
+                colours.add(Float.parseFloat(mtlSplit[1]));
+                colours.add(Float.parseFloat(mtlSplit[2]));
+                colours.add(Float.parseFloat(mtlSplit[3]));
+            }
+        }
+    }
+
+    private List<List<List<String>>> loadModel() {
+        List<List<List<String>>> model = new ArrayList<>();
+        for (String stage : entity.getModelPaths()) {
+            List<List<String>> lists = new ArrayList<>();
+            try {
+                lists.add(readFile(stage + ".obj"));
+                lists.add(readFile(stage + ".mtl"));
+            } catch (NullPointerException e) {
+                System.err.println("Couldn't find " + stage + ".obj and " + stage + ".mtl at resources folder.");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            model.add(lists);
+        }
+        return model;
+    }
+
+    private static List<String> readFile(String path) throws IOException {
+        List<String> lines = new ArrayList<>();
+
+        // Use the ClassLoader to get the input stream of the file inside the JAR
+        InputStream inputStream = EntityProcessor.class.getClassLoader().getResourceAsStream(path);
+
+        if (inputStream != null) {
+            // Read the lines using a BufferedReader
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    lines.add(line);
+                }
+            }
+        } else {
+            System.err.println("File not found: " + path);
+        }
+
+        return lines;
+    }
+
 
     private static float getMin(List<Float> floatList, int axis) {
         float min = floatList.get(axis);
@@ -233,10 +272,13 @@ public final class EntityProcessor {
     public void buildFooter() {
         buildVanillaComponents();
 
-        components.entrySet().stream()
+        List<Map.Entry<PrintableComponent, String>> collect = components.entrySet().stream()
                 .filter(e -> e.getValue() != null)
                 .filter(e -> e.getKey().getRequirements().stream().allMatch(entity::hasComponent))
-                .forEach(e -> addFooter(e.getKey().name() + (e.getValue().isEmpty() ? "" : ";" + e.getValue())));
+                .collect(Collectors.toList());
+
+        addFooter(String.valueOf(collect.size()));
+        collect.forEach(e -> addFooter(e.getKey().name() + (e.getValue().isEmpty() ? "" : ";" + e.getValue())));
     }
 
     @SuppressWarnings("unchecked")
@@ -264,7 +306,7 @@ public final class EntityProcessor {
                 i++;
             }
             components.put(MATERIAL, ";" + join(entity.getSecondNaturalColor() != null,
-                    PrintUtils.printArray(";", map.entrySet().toArray(new Map.Entry[0]), e -> {
+                    EntityPrint.printArray(";", map.entrySet().toArray(new Map.Entry[0]), e -> {
                         Map.Entry<Color, Integer> entry = (Map.Entry<Color, Integer>) e;
                         return VanillaColor.isVanilla(entry.getKey()) + ";" + entry.getValue();
                     })));
@@ -272,23 +314,22 @@ public final class EntityProcessor {
         if (entity instanceof Tooltip) {
             Tooltip info = (Tooltip) entity;
             components.put(INFO, join(LoomMod.MOD_POINTER + ";" + info.name(), info.description(), info.price(),
-                    info.dpPerMin(), info.range(), info.sound()));
+                    info.dpPerMin(), info.range(), info.sound().toString().toLowerCase(Locale.ROOT)));
         }
-        if (entity instanceof LivingEntity) {
-            LivingEntity life = (LivingEntity) entity;
+        if (entity instanceof Living) {
+            Living life = (Living) entity;
 
-            EntityComponent print1 = new EntityComponent() {
-            };
+            EntityComponent print1 = new EntityComponent() {};
             float[] factors = life.populationFactors();
             print1.addSub(life.population(), life.lifespan(), factors.length + (factors.length > 0 ? ";"
                             + IntStream.range(0, factors.length).mapToDouble(i -> factors[i]).mapToObj(String::valueOf)
                             .collect(Collectors.joining(";")) : ""),
                     life.breedingMaturity(), life.breedingCooldown());
-            if (life.getEvolution() == null) print1.addSub("-1;" + life.getDeath().build(), life.getWellBeing().build());
-            else print1.addSub(life.getEvolution().parent, life.getEvolution().points,
+            if (life.getEvolution() == null) print1.addSub(";-1;" + life.getDeath().build(), life.getWellBeing().build());
+            else print1.addSub(";" + life.getEvolution().parent, life.getEvolution().points,
                     life.getEvolution().build() + ";" + life.getDeath().build(), life.getWellBeing().build());
             if (life.getDefense() != 0) print1.addSub(life.getDefense());
-            components.put(LIFE, print1.build());
+            components.put(LIFE, print1.build().replaceFirst(String.valueOf(components.size()), ""));
 
             EntityComponent print2 = new EntityComponent() {
             };
@@ -302,7 +343,7 @@ public final class EntityProcessor {
             components.put(FRUITER, ";" + fruit.modelIndex() + ";;" + fruit.stages()
                     + (fruit.time() != 5 ? ";;" + fruit.time() : ""));
         }
-        byAnnotation(LILY, Floater.class);
+        byAnnotation(LILY, FloaterPlant.class);
         byAnnotation(SUN_FACER, Sunflower.class);
         if (entity instanceof Builder) {
             Builder builder = (Builder) entity;
@@ -314,12 +355,12 @@ public final class EntityProcessor {
                     builder.buildTime(), (builder.age() - 1) / ((LivingEntity) entity).stages()) +
                     (builder.buildingHour() != 0 ? ";;" + builder.buildTime() : ""));
         }
-        if (entity.hasComponent(FOOD)) components.put(FOOD, PrintUtils.printArray(";", entity.getFoodInfo().values()
+        if (entity.hasComponent(FOOD)) components.put(FOOD, EntityPrint.printArray(";", entity.getFoodInfo().values()
                 .toArray(new String[0]), s -> s));
         byAnnotation(STINGING, Stinger.class);
         byAnnotation(CHARGE, TreeCharger.class);
         byAnnotation(PEACOCK, Peacock.class);
-        if (entity instanceof Holder) components.put(EQUIP, ";" + PrintUtils.printArray(";;",
+        if (entity instanceof Holder) components.put(EQUIP, ";" + EntityPrint.printArray(";;",
                 ((Holder) entity).positions(), v -> v.x + ";" + v.y + ";" + v.z));
         byAnnotation(NAME, Named.class);
         byAnnotation(BEAVER, DenBuilder.class);
@@ -338,7 +379,7 @@ public final class EntityProcessor {
             if (entity.goesUnderwater()) components.put(FISH_HUNT, "");
             if (entity.goesOverwater()) {
                 if (entity.hasEggStage()) components.put(BIRD_HUNT, "");
-                else components.put(HUNT, ";" + join(predator.range(), PrintUtils.printArray(";;", predator.preys(),
+                else components.put(HUNT, ";" + join(predator.range(), EntityPrint.printArray(";;", predator.preys(),
                                 Classifiable::getClassification), predator.huntsYoung(), predator.huntsOld()));
             }
         }

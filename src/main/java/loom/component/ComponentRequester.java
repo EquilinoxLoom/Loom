@@ -7,10 +7,10 @@ import breedingTraits.TraitBlueprint;
 import classification.Classifier;
 import componentArchitecture.Component;
 import componentArchitecture.ComponentBundle;
-import equilinox.classification.Classifiable;
-import equilinox.vanilla.VanillaComponent;
-import equilinox.vanilla.VanillaLoader;
+import loom.entity.Classifiable;
 import loom.entity.weaver.EntityComponent;
+import loom.equilinox.vanilla.VanillaComponent;
+import loom.equilinox.vanilla.VanillaLoader;
 import utils.CSVReader;
 import utils.MyFile;
 

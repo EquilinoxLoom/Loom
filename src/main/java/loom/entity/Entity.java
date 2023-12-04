@@ -1,6 +1,5 @@
 package loom.entity;
 
-import equilinox.classification.Specie;
 import food.FoodSectionType;
 import loom.component.PrintableComponent;
 
@@ -105,4 +104,6 @@ public interface Entity extends Specie {
      * @return A map of food sections and its .csv data strings.
      */
     Map<FoodSectionType, String> getFoodInfo();
+
+    String build();
 }
