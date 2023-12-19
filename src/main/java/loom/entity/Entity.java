@@ -1,9 +1,9 @@
 package loom.entity;
 
-import food.FoodSectionType;
 import loom.component.PrintableComponent;
 
 import java.awt.*;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -11,6 +11,10 @@ import java.util.Map;
  * that populate the game world and are characterized by their components, behaviors, and classifications.
  */
 public interface Entity extends Specie {
+    /**
+     * @return the in-game name of the entity.
+     */
+    String name();
 
     /**
      * Checks if the entity has a specific component.
@@ -82,6 +86,8 @@ public interface Entity extends Specie {
     }
 
     /**
+     * Having an egg stage changes key features in an entity behaviour, when in the first stage, those entities have its
+     * movement and intelligence disabled, so having it set on the core interface is very important.
      * @return True if the entity has an egg stage, false otherwise.
      */
     default boolean hasEggStage() {
@@ -93,17 +99,12 @@ public interface Entity extends Specie {
      *
      * @return A map of colors and prices.
      */
-    Map<Color, Integer> getMaterials();
+    LinkedHashMap<Color, Integer> getMaterials();
 
     /**
      * @return The second natural color of the entity.
      */
     Color getSecondNaturalColor();
-
-    /**
-     * @return A map of food sections and its .csv data strings.
-     */
-    Map<FoodSectionType, String> getFoodInfo();
 
     String build();
 }

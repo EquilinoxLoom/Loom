@@ -1,3 +1,3 @@
-package loom.entity.behaviour;
+package loom.entity.animal;
 
 public @interface TreeCharger {}

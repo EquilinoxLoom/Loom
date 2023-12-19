@@ -33,12 +33,12 @@ public class LaunchHelper {
 			"liblwjgl.dylib",
 			"openal.dylib"
 	};
-	
+
 	private static boolean emlDebugModeEnabled, equilinoxDebugModeEnabled;
 	
 	private static OperatingSystem operatingSystem;
 	private static File equilinoxDir, equilinoxJar, logFile, nativesDir, modsDir, javaFile;
-	
+
 	public static boolean isEmlDebugModeEnabled() {
 		return emlDebugModeEnabled;
 	}
@@ -208,7 +208,6 @@ public class LaunchHelper {
 						EmkLogger.log(LaunchHelper.class, " - copied " + nativeName);
 					}
 				}
-
 			}
 		} catch(IOException e) {
 			throw new RuntimeException(e);

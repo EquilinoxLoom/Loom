@@ -6,7 +6,6 @@ import loom.LoomMod;
 import loom.equilinox.ducktype.SoundReference;
 import loom.equilinox.vanilla.VanillaColor;
 import loom.equilinox.vanilla.VanillaLoader;
-import main.MainApp;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,8 +21,6 @@ import toolbox.Colour;
 import utils.CSVReader;
 import utils.MyFile;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,28 +43,18 @@ public class MixinBiome {
 
     @Inject(method = "<clinit>", at = @At(value = "FIELD", opcode = Opcodes.PUTSTATIC, target = "Lbiomes/Biome;ENUM$VALUES:[Lbiomes/Biome;", shift = At.Shift.AFTER))
     private static void addCustomBiome(CallbackInfo ci) {
-        List<LoomMod> mods;
-        try {
-            Method method = MainApp.class.getDeclaredMethod("loom$getLooms");
-            method.setAccessible(true);
-            mods = (List<LoomMod>) method.invoke(null);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-
         List<Biome> biomes = new ArrayList<>(Arrays.asList(ENUM$VALUES));
-        mods.stream().map(LoomMod::getBiomes).flatMap(Collection::stream)
-                .forEach(biome -> {
-                    try {
-                        biomes.add(newBiome(biome.name(), biomes.size(), biome.inGameName(),
-                                VanillaColor.parseColor(biome.color()), (ParticleSystem) VanillaLoader
-                                        .getFunctionByClass(Particle.class)
-                                        .apply(new CSVReader(new MyFile(biome.particle().build()))),
-                                SoundReference.load(biome.sound())));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        LoomMod.LOOMS.stream().map(LoomMod::getBiomes).flatMap(Collection::stream).forEach(biome -> {
+            try {
+                biomes.add(newBiome(biome.name(), biomes.size(), biome.inGameName(),
+                        VanillaColor.parseColor(biome.color()), (ParticleSystem) VanillaLoader
+                                .getFunctionByClass(Particle.class)
+                                .apply(new CSVReader(new MyFile(biome.particle().build()))),
+                        SoundReference.load(biome.sound())));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         ENUM$VALUES = biomes.toArray(new Biome[0]);
     }
 }

@@ -1,9 +1,13 @@
 package loom.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * An interface representing entities that can be classified. All entities inherently inherit the HEAD node.
  */
 public interface Classifiable {
+    Set<Specie> offspring = new HashSet<>();
 
     /**
      * The mother classification of all entities.
@@ -21,6 +25,11 @@ public interface Classifiable {
 
         public boolean belongs(Classifiable classifiable) {
             return this.equals(classifiable);
+        }
+
+        @Override
+        public void inherit(Specie specie) {
+            offspring.add(specie);
         }
     };
 
@@ -42,8 +51,8 @@ public interface Classifiable {
      * Retrieves a string representing the cumulative classification of all nodes before this entity.
      *
      * @return A string representing the sum of all nodes before it.
-     * For example, erl represents large rocks: e is the key for non-living entities,
-     * r is for rocks and finally l is for large rocks.
+     * For example, "erl" represents large rocks: "e" is the key for non-living entities,
+     * "r" is for rocks and finally "l" is for large rocks.
      */
     default String getClassification() {
         if (this == HEAD) return "";
@@ -56,5 +65,14 @@ public interface Classifiable {
      */
     default boolean belongs(Classifiable classifiable) {
         return equals(classifiable) || classifiable.belongs(this);
+    }
+
+    default void inherit(Specie specie) {
+        offspring.add(specie);
+        getLineage().inherit(specie);
+    }
+
+    default Set<Specie> getOffspring() {
+        return offspring;
     }
 }

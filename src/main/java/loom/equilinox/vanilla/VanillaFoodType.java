@@ -1,6 +1,6 @@
 package loom.equilinox.vanilla;
 
-import loom.entity.behaviour.FruitProducer;
+import loom.entity.plant.FruitProducer;
 import loom.entity.structure.StructureEntity;
 import loom.equilinox.ducktype.FoodTypeReference;
 

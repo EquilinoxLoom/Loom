@@ -101,7 +101,7 @@ public class Launch {
          mainMethod.invoke(null, (Object) argumentList.toArray(new String[0]));
       } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException |
                InvocationTargetException e) {
-          throw new RuntimeException("Unable to launch");
+          throw new RuntimeException(e);
       }
    }
 }

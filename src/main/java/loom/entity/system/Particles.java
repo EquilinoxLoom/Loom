@@ -1,8 +1,8 @@
 package loom.entity.system;
 
-import com.sun.istack.internal.NotNull;
 import loom.entity.weaver.EntityComponent;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 @SuppressWarnings("unused")
@@ -22,7 +22,7 @@ public class Particles extends EntityComponent {
     public float x2, x3, y2, z2, durDev, scaleDev, speedDev, udSpeed = 0;
     public boolean rotation = false, xRotation = false;
 
-    public Particles(@NotNull SpawnPattern spawn, float particlesPerSecond, float speed, float gravity, float duration,
+    public Particles(@Nonnull SpawnPattern spawn, float particlesPerSecond, float speed, float gravity, float duration,
                      float scale, int particleTexture, float xOffset, float yOffset, float zOffset,
                      float durationDeviation, float scaleDeviation, float speedDeviation) {
         this.spawn = spawn;
@@ -40,8 +40,8 @@ public class Particles extends EntityComponent {
         this.speedDev = speedDeviation;
     }
 
-    public Particles(@NotNull Color color, boolean additive, float timeToFadeIn, float timeToFadeOut,
-                     @NotNull SpawnPattern spawn, float particlesPerSecond, float speed, float gravity, float duration,
+    public Particles(@Nonnull Color color, boolean additive, float timeToFadeIn, float timeToFadeOut,
+                     @Nonnull SpawnPattern spawn, float particlesPerSecond, float speed, float gravity, float duration,
                      float scale, float xOffset, float yOffset, float zOffset,
                      float durationDeviation, float scaleDeviation, float speedDeviation) {
         this.color = color;

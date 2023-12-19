@@ -1,6 +1,6 @@
 package loom.entity.life;
 
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 
 public interface Living {
     float population();

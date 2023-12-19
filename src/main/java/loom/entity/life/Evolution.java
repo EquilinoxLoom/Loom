@@ -1,12 +1,13 @@
 package loom.entity.life;
 
-import com.sun.istack.internal.NotNull;
 import loom.entity.Classifiable;
 import loom.entity.Specie;
 import loom.entity.weaver.EntityComponent;
 import loom.equilinox.ducktype.BiomeReference;
 import loom.equilinox.vanilla.VanillaColor;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 @SuppressWarnings("unused")
@@ -53,7 +54,7 @@ public class Evolution extends EntityComponent {
     /**
      * Specified biome must be lower than 8% at the environment.
      */
-    public void addNoBiomeRequirement(@NotNull BiomeReference biome) {
+    public void addNoBiomeRequirement(@Nonnull BiomeReference biome) {
         addEnvironmentRequirement(4, biome, "");
     }
 

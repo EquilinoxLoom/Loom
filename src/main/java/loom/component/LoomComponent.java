@@ -1,6 +1,5 @@
 package loom.component;
 
-import com.sun.istack.internal.Nullable;
 import componentArchitecture.Component;
 import componentArchitecture.*;
 import entityInfoGui.PopUpInfoGui;
@@ -19,6 +18,7 @@ import userInterfaces.TextStatInfo;
 import utils.BinaryReader;
 import utils.BinaryWriter;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -228,7 +228,8 @@ public abstract class LoomComponent extends Component implements ComponentRefere
 
     public final void setBlueprintType(ComponentType type) {
         try {
-            Method setBlueprint = this.getClass().getMethod("loom$setBlueprint", ComponentBlueprint.class);
+            Method setBlueprint = this.getClass().getSuperclass().getSuperclass()
+                    .getDeclaredMethod("loom$setBlueprint", ComponentBlueprint.class);
             setBlueprint.setAccessible(true);
             setBlueprint.invoke(this, (this.loader = new LoomBlueprint(type, this)));
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {

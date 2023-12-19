@@ -1,14 +1,15 @@
 package loom.entity.weaver;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class EntityComponent {
+    protected final List<String> print = new ArrayList<>();
+
+    private final List<Object> printSub = new ArrayList<>();
+
     protected EntityComponent() {}
-
-    private final List<String> print = new ArrayList<>();
-
-    private final List<String> printSub = new ArrayList<>();
 
     protected String getDelimiter() {
         return ";";
@@ -19,7 +20,7 @@ public abstract class EntityComponent {
     }
 
     public void addSub(Object... os) {
-        print.add(EntityPrint.print(";;", os));
+        printSub.addAll(Arrays.asList(os));
     }
 
     public String build() {

@@ -12,20 +12,35 @@ import loom.entity.Specie;
 import loom.equilinox.CustomEatingAnimation;
 import loom.equilinox.EvolutionRequirement;
 import loom.equilinox.ducktype.BiomeReference;
+import main.MainApp;
 
 import java.lang.reflect.*;
 import java.util.*;
 
 public abstract class LoomMod extends EquilinoxMod {
     public static final String MOD_POINTER = "@loom@";
-    public static final int BUFFER_SIZE = 40000;
 
-    final Map<String, Classifiable> CLASSIFICATIONS = new HashMap<>();
-    final Map<Integer, Entity> ENTITIES = new LinkedHashMap<>();
+    //private static final TreeSet<Integer> ENTITY_SET = (TreeSet<Integer>)
+            //Arrays.stream(VanillaSpecie.values()).map(VanillaSpecie::getId).collect(Collectors.toSet());
 
-    final List<LoomComponent> COMPONENTS = new ArrayList<>();
-    final List<BiomeReference> BIOMES = new ArrayList<>();
-    final List<CustomEatingAnimation> EATING_ANIMATIONS = new ArrayList<>();
+    final Map<String, Classifiable> classifications = new HashMap<>();
+    final Map<Integer, Entity> entities = new LinkedHashMap<>();
+
+    final List<LoomComponent> components = new ArrayList<>();
+    final List<BiomeReference> biomes = new ArrayList<>();
+    final List<CustomEatingAnimation> eatingAnimations = new ArrayList<>();
+
+    public static final List<LoomMod> LOOMS;
+
+    static {
+        try {
+            Method method = MainApp.class.getDeclaredMethod("loom$getLooms");
+            method.setAccessible(true);
+            LOOMS = (List<LoomMod>) method.invoke(null);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public LoomMod() {}
 
@@ -33,7 +48,7 @@ public abstract class LoomMod extends EquilinoxMod {
 
     @Override public final void preInit(PreInitializer init) {
         registry(new LoomRegistry(this));
-        CLASSIFICATIONS.forEach((name, classification) -> {
+        classifications.forEach((name, classification) -> {
             try {
                 Classification c = Classifier.getClassification(classification.getLineage().getClassification());
                 Method createChild = c.getClass().getMethod("createChild", char.class, String.class);
@@ -45,22 +60,26 @@ public abstract class LoomMod extends EquilinoxMod {
         });
     }
 
+    public String mixin() {
+        return null;
+    }
+
     public abstract void registry(LoomRegistry registry);
 
     public List<LoomComponent> getComponents() {
-        return new ArrayList<>(COMPONENTS);
+        return new ArrayList<>(components);
     }
 
     public List<BiomeReference> getBiomes() {
-        return new ArrayList<>(BIOMES);
+        return new ArrayList<>(biomes);
     }
 
     public List<CustomEatingAnimation> getEatingAnimations() {
-        return new ArrayList<>(EATING_ANIMATIONS);
+        return new ArrayList<>(eatingAnimations);
     }
 
     public Map<Integer, Entity> getEntities() {
-        return new LinkedHashMap<>(ENTITIES);
+        return new LinkedHashMap<>(entities);
     }
 
     public static class LoomRegistry {
@@ -71,15 +90,15 @@ public abstract class LoomMod extends EquilinoxMod {
         }
 
         public void registerComponent(LoomComponent component) {
-            mod.COMPONENTS.add(component);
+            mod.components.add(component);
         }
 
         public void registerBiome(BiomeReference reference) {
-            mod.BIOMES.add(reference);
+            mod.biomes.add(reference);
         }
 
         public void registerEatingAnimation(CustomEatingAnimation animation) {
-            mod.EATING_ANIMATIONS.add(animation);
+            mod.eatingAnimations.add(animation);
         }
 
         public Classifiable requestNewClassification(Classifiable parent, char id, String name) {
@@ -98,7 +117,7 @@ public abstract class LoomMod extends EquilinoxMod {
                     return String.valueOf(id);
                 }
             };
-            mod.CLASSIFICATIONS.put(name, classifiable);
+            mod.classifications.put(name, classifiable);
             try {
                 Method createChild = Classification.class.getDeclaredMethod("createChild", char.class, String.class);
                 createChild.setAccessible(true);
@@ -110,7 +129,7 @@ public abstract class LoomMod extends EquilinoxMod {
         }
 
         public void registerEntity(Entity entity) {
-            mod.ENTITIES.put(entity.getId(), entity);
+            mod.entities.put(entity.getId(), entity);
         }
 
         public void registerEvolutionRequirement(EvolutionRequirement requirement) {

@@ -6,7 +6,14 @@
   "mixins": [
     "MixinGameMenuGui",
     "MixinMenuPanelGui",
-    "MixinSoundLoader",
+    "clearlog.MixinDynamicMemoryManager",
+    "clearlog.MixinMutator",
+    "clearlog.MixinOpenGlError",
+    "clearlog.MixinSaveSlot",
+    "clearlog.MixinSoundLoader",
+    "clearlog.MixinStreamer",
+    "clearlog.MixinTextLoader",
+    "clearlog.MixinWorldLoader",
     "loom.MixinBiome",
     "loom.MixinBlueprintRepository",
     "loom.MixinComponent",
@@ -16,8 +23,7 @@
     "loom.MixinInformationComponentLoader",
     "loom.MixinMainApp",
     "loom.MixinMyFile",
-    "loom.MixinProfileImageRenderer",
-    "loom.MixinSaveSlot",
-    "loom.MixinTempEatAnimBlueprint"
+    "loom.MixinTempEatAnimBlueprint",
+    "loom.MixinToolbar"
   ]
 }

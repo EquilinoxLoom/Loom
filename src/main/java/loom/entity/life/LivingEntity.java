@@ -1,24 +1,17 @@
 package loom.entity.life;
 
-import com.sun.istack.internal.NotNull;
-import loom.entity.LoomEntity;
 import loom.entity.Tooltip;
+import loom.entity.weaver.LoomEntity;
+
+import javax.annotation.Nonnull;
 
 public abstract class LivingEntity extends LoomEntity implements Tooltip, Living {
-    private final String name;
-
     private Death death;
     private int defense;
 
-    public LivingEntity(String name, int id, @NotNull Death death) {
-        super(id);
-        this.name = name;
+    public LivingEntity(@Nonnull String name, @Nonnull Death death) {
+        super(name);
         this.death = death;
-    }
-
-    @Override
-    public String name() {
-        return name;
     }
 
     public int getDefense() {

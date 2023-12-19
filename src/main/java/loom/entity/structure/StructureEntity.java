@@ -1,20 +1,20 @@
 package loom.entity.structure;
 
-import loom.entity.LoomEntity;
 import loom.entity.Tooltip;
+import loom.entity.weaver.LoomEntity;
 import loom.equilinox.vanilla.VanillaComponent;
 
 public abstract class StructureEntity extends LoomEntity implements Tooltip {
     private final int stages;
 
-    protected StructureEntity(int id, int buildStages, int maxBuildPoints) {
-        super(id);
+    protected StructureEntity(String name, int buildStages, int maxBuildPoints) {
+        super(name);
         this.components.put(VanillaComponent.BUILD, buildStages + ";" + maxBuildPoints);
         this.stages = buildStages;
     }
 
-    protected StructureEntity(int id, int buildStages, int maxBuildPoints, int fullyBuiltPoints) {
-        super(id);
+    protected StructureEntity(String name, int buildStages, int maxBuildPoints, int fullyBuiltPoints) {
+        super(name);
         this.components.put(VanillaComponent.BUILD, buildStages + ";" + maxBuildPoints + ";;" + fullyBuiltPoints);
         this.stages = buildStages;
     }

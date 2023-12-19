@@ -44,9 +44,9 @@ public enum VanillaSpecie implements Specie {
     WATER_LILY(WATER_PLANT),
     SEAWEED(WATER_PLANT),
     CACTUS(VanillaClassification.CACTUS),
-    PRICKLY_PEAR(CACTUS),
+    PRICKLY_PEAR(VanillaClassification.CACTUS),
     GRASS_TUFT(GRASSES),
-    YUCCA(CACTUS),
+    YUCCA(VanillaClassification.CACTUS),
     @Deprecated DESERT_ROCK_STRUCTURE(LARGE_ROCK),
     PIKE(BIG_FISH),
     @Deprecated TEST_FIR_TREE(TREE),
@@ -145,8 +145,8 @@ public enum VanillaSpecie implements Specie {
     TROPICAL_FLOWER(FLOWER),
     BLUEBELL(FLOWER),
     BUTTON_MUSHROOM(MUSHROOM),
-    SMALL_CACTUS(CACTUS),
-    GIANT_CACTUS(CACTUS),
+    SMALL_CACTUS(VanillaClassification.CACTUS),
+    GIANT_CACTUS(VanillaClassification.CACTUS),
     DESERT_TREE(VanillaClassification.DESERT_TREE),
     JUNGLE_GRASS(GRASSES),
     FICUS_TREE(JUNGLE_TREE),
@@ -164,8 +164,8 @@ public enum VanillaSpecie implements Specie {
     TROPICAL_SEAWEED(WATER_PLANT),
     NUT_TREE(WOODLAND_TREE),
     NUT(VanillaClassification.NUT),
-    BIRD_MEAT(MEAT),
-    SMALL_MEAT(MEAT),
+    BIRD_MEAT(VanillaClassification.MEAT),
+    SMALL_MEAT(VanillaClassification.MEAT),
     MANGO(FRUIT),
     TURNIP(ROOT_VEGETABLE),
     BULRUSH(WATER_PLANT),
@@ -256,6 +256,8 @@ public enum VanillaSpecie implements Specie {
     private final Classifiable superOrder;
 
     VanillaSpecie(Classifiable superOrder) {
+        superOrder.inherit(this);
+
         this.superOrder = superOrder;
     }
 

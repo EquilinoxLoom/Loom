@@ -3,7 +3,6 @@ package equilinoxmodkit.mixins.loom;
 import componentArchitecture.ComponentLoader;
 import componentArchitecture.ComponentType;
 import loom.LoomMod;
-import main.MainApp;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,8 +13,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,17 +32,8 @@ public class MixinComponentType {
 
     @Inject(method = "<clinit>", at = @At(value = "FIELD", opcode = Opcodes.PUTSTATIC, target = "LcomponentArchitecture/ComponentType;ENUM$VALUES:[LcomponentArchitecture/ComponentType;", shift = At.Shift.AFTER))
     private static void addCustomComponentType(CallbackInfo ci) {
-        List<LoomMod> mods;
-        try {
-            Method method = MainApp.class.getDeclaredMethod("loom$getLooms");
-            method.setAccessible(true);
-            mods = (List<LoomMod>) method.invoke(null);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-
         List<ComponentType> types = new ArrayList<>(Arrays.asList(ENUM$VALUES));
-        mods.stream().map(LoomMod::getComponents).flatMap(Collection::stream)
+        LoomMod.LOOMS.stream().map(LoomMod::getComponents).flatMap(Collection::stream)
                 .forEach(component -> {
                     ComponentType type = newComponentType(component.name(), types.size(), component.getLoader(),
                             component.isActive(), component.isDynamic());

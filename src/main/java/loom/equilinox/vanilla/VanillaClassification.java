@@ -94,4 +94,5 @@ public enum VanillaClassification implements Classifiable {
     public String getNode() {
         return String.valueOf(c);
     }
+
 }

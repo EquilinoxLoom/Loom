@@ -1,7 +1,7 @@
 package loom.entity.animal;
 
-import com.sun.istack.internal.NotNull;
 import loom.entity.Classifiable;
+import loom.entity.Entity;
 import loom.entity.Specie;
 import loom.entity.food.Diet;
 import loom.entity.life.Death;
@@ -9,70 +9,28 @@ import loom.entity.life.LivingEntity;
 import loom.entity.weaver.EntityPrint;
 import loom.equilinox.vanilla.VanillaComponent;
 
+import javax.annotation.Nonnull;
+
+/**
+ * In Equilinox, what determines an animal is: a living entity which moves and has some
+ * sort of artificial intelligence. That said, in order to inherently implement such features
+ * Loom offers this class as a shortcut. All animals start with a base AI,
+ * determined by whether it swims, walks, do both, or fly and whether it has an egg stage.
+ * @see Movement#getMovementAi(Entity)
+ */
 @SuppressWarnings("unused")
 public abstract class AnimalEntity extends LivingEntity {
-    protected final int id;
+    protected final Movement movement;
 
-    public AnimalEntity(String name, int id, @NotNull Movement movement) {
-        super(name, id, Death.newFallDeath(1.5f, 2.5f, 60));
+    public AnimalEntity(@Nonnull String name, @Nonnull Movement movement) {
+        super(name, Death.newFallDeath(1.5f, 2.5f, 60));
+        this.movement = movement;
         this.components.put(VanillaComponent.MOVEMENT, movement.build().substring(1));
-        this.components.put(VanillaComponent.AI, getBaseAi());
-        this.id = id;
+        this.components.put(VanillaComponent.AI, movement.getMovementAi(this));
     }
-
-    private String getBaseAi() {
-        if (hasEggStage()) {
-            return "WALKING_BIRD;;2;;4.5;;" + (goesUnderwater() ? 1 : 0);
-        } else if (goesOverwater() && goesUnderwater()) {
-            return "PATROL_WITH_SWIM";
-        } else if (goesUnderwater()) {
-            return "SWIM";
-        } else {
-            return "PATROL";
-        }
-    }
-
-    public abstract boolean hasEggStage();
 
     public final boolean dynamic() {
         return true;
-    }
-
-    /**
-     * Standard values are: min = 5; max = 10
-     */
-    public void setPatrolAI(float minIdleTime, float maxIdleTime) {
-        this.components.put(VanillaComponent.AI, EntityPrint.print(";;", "PATROL"
-                + (goesUnderwater() ? "_WITH_SWIM" : ""), minIdleTime, maxIdleTime));
-    }
-
-    public void setFlyAI() {
-        this.components.put(VanillaComponent.AI, "BIRD");
-    }
-
-    public void setFlyAI(float circleRotation, float circleMinTime) {
-        this.components.put(VanillaComponent.AI, EntityPrint.print(";;", "BIRD", circleRotation, circleMinTime));
-    }
-
-    public void setWalkingBirdAI(float minIdleTime, float maxIdleTime) {
-        this.components.put(VanillaComponent.AI, EntityPrint.print(";;", "WALKING_BIRD", minIdleTime, maxIdleTime,
-                goesUnderwater()));
-    }
-
-    public void setBeeAI() {
-        this.components.put(VanillaComponent.AI, "BEE");
-    }
-
-    public void setMeerkatAI() {
-        this.components.put(VanillaComponent.AI, "MEERKAT");
-    }
-
-    public void setMeerkatAI(float minIdleTime, float maxIdleTime) {
-        this.components.put(VanillaComponent.AI, EntityPrint.print(";;", "MEERKAT", minIdleTime, maxIdleTime));
-    }
-
-    public void setDolphinAI() {
-        this.components.put(VanillaComponent.AI, "DOLPHIN");
     }
 
     public void setSleeps(float minStartHour, float maxStartHour, float minEndHour, float maxEndHour) {
@@ -82,11 +40,6 @@ public abstract class AnimalEntity extends LivingEntity {
 
     public void setFlees(float range) {
         components.put(VanillaComponent.FLEE, ";" + EntityPrint.print(";;", range, goesOverwater(), goesUnderwater()));
-    }
-
-    /**Guinea pigs panic*/
-    public void setPanic(float range) {
-        components.put(VanillaComponent.PANIC, "");
     }
 
     public void setHides(float range, Classifiable hidingSpot) {
@@ -108,6 +61,7 @@ public abstract class AnimalEntity extends LivingEntity {
     }
 
     public void setDiet(Diet diet) {
+        diet.setEntity(this);
         components.put(VanillaComponent.EATING, diet.build());
     }
 
@@ -127,5 +81,9 @@ public abstract class AnimalEntity extends LivingEntity {
 
     public void setInsectCatcher(float minCooldown, float maxCooldown) {
         components.put(VanillaComponent.FLINGING, ";" + minCooldown + ";;" + maxCooldown);
+    }
+
+    public void setContainerFiller() {
+        components.put(VanillaComponent.BEE, "");
     }
 }

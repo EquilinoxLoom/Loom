@@ -4,6 +4,7 @@ import death.DeathAICreator;
 import death.DeathAiBlueprint;
 import food.*;
 import languages.GameText;
+import loom.LoomMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import utils.CSVReader;
@@ -24,7 +25,7 @@ public class MixinFoodCompLoader {
             for (int i = 0; i < count; i++) {
                 String name;
                 String str = reader.getNextString();
-                if (str.startsWith("EMBROIDER-")) name = str.replace("EMBROIDER-", "");
+                if (str.startsWith(LoomMod.MOD_POINTER)) name = str.replace(LoomMod.MOD_POINTER, "");
                 else name = GameText.getText(Integer.parseInt(str));
                 int foodPoints = reader.getNextInt();
                 FoodSectionType type = FoodSectionType.valueOf(reader.getNextString());

@@ -1,4 +1,4 @@
-package equilinoxmodkit.mixins.loom;
+package equilinoxmodkit.mixins.clearlog;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

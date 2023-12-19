@@ -1,3 +1,3 @@
-package loom.entity.other;
+package loom.entity.animal;
 
 public @interface Stinger {}

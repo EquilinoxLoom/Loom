@@ -1,4 +1,4 @@
-package loom.entity.behaviour;
+package loom.entity.animal;
 
 import loom.entity.Classifiable;
 

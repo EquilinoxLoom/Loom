@@ -5,7 +5,10 @@ import utils.BinaryReader;
 import utils.BinaryWriter;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,18 +41,23 @@ public class EntityPrint {
      * @return The formatted string.
      */
     public static String process(String joiner, Function<Object, Object> func, Object... os) {
-        List<Object> args = new ArrayList<>();
-        for (Object arg : os) {
-            if (arg instanceof Object[]) {
-                Collections.addAll(args, ((Object[]) arg));
+        return flattened(os).stream().filter(Objects::nonNull)
+                .map(func).map(String::valueOf)
+                .collect(Collectors.joining(joiner));
+    }
+
+    private static List<Object> flattened(Object[] os) {
+        List<Object> list = new ArrayList<>();
+
+        for (Object o : os) {
+            if (o.getClass().isArray()) {
+                list.addAll(flattened((Object[]) o));
             } else {
-                args.add(arg);
+                list.add(o);
             }
         }
 
-        return args.stream().filter(Objects::nonNull)
-                .map(func).map(String::valueOf)
-                .collect(Collectors.joining(joiner));
+        return list;
     }
 
     /**

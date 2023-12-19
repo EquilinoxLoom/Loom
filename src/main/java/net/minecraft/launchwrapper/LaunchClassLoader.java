@@ -1,5 +1,6 @@
 package net.minecraft.launchwrapper;
 
+import equilinoxmodkit.util.ExtendedLogger;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -20,17 +21,17 @@ import java.util.jar.Manifest;
 
 public class LaunchClassLoader extends URLClassLoader {
    public static final int BUFFER_SIZE = 4096;
-   private List<URL> sources;
-   private ClassLoader parent = this.getClass().getClassLoader();
-   private List<IClassTransformer> transformers = new ArrayList(2);
-   private Map<String, Class<?>> cachedClasses = new ConcurrentHashMap();
-   private Set<String> invalidClasses = new HashSet(1000);
-   private Set<String> classLoaderExceptions = new HashSet();
-   private Set<String> transformerExceptions = new HashSet();
-   private Map<String, byte[]> resourceCache = new ConcurrentHashMap(1000);
-   private Set<String> negativeResourceCache = Collections.newSetFromMap(new ConcurrentHashMap());
+   private final List<URL> sources;
+   private final ClassLoader parent = this.getClass().getClassLoader();
+   private final List<IClassTransformer> transformers = new ArrayList<>(2);
+   private final Map<String, Class<?>> cachedClasses = new ConcurrentHashMap<>();
+   private final Set<String> invalidClasses = new HashSet<>(1000);
+   private final Set<String> classLoaderExceptions = new HashSet<>();
+   private final Set<String> transformerExceptions = new HashSet<>();
+   private final Map<String, byte[]> resourceCache = new ConcurrentHashMap<>(1000);
+   private final Set<String> negativeResourceCache = Collections.newSetFromMap(new ConcurrentHashMap<>());
    private IClassNameTransformer renameTransformer;
-   private final ThreadLocal<byte[]> loadBuffer = new ThreadLocal();
+   private final ThreadLocal<byte[]> loadBuffer = new ThreadLocal<>();
    private static final String[] RESERVED_NAMES = new String[]{"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("legacy.debugClassLoading", "false"));
    private static final boolean DEBUG_FINER;
@@ -38,8 +39,8 @@ public class LaunchClassLoader extends URLClassLoader {
    private static File tempFolder;
 
    public LaunchClassLoader(URL[] sources) {
-      super(sources, (ClassLoader)null);
-      this.sources = new ArrayList(Arrays.asList(sources));
+      super(sources, null);
+      this.sources = new ArrayList<>(Arrays.asList(sources));
       this.addClassLoaderExclusion("net.minecraft.launchwrapper.");
       this.addTransformerExclusion("javax.");
       this.addTransformerExclusion("argo.");
@@ -50,14 +51,16 @@ public class LaunchClassLoader extends URLClassLoader {
       if (DEBUG_SAVE) {
          int x = 1;
 
-         for(tempFolder = new File(Launch.minecraftHome, "CLASSLOADER_TEMP"); tempFolder.exists() && x <= 10; tempFolder = new File(Launch.minecraftHome, "CLASSLOADER_TEMP" + x++)) {
-         }
+          tempFolder = new File(Launch.minecraftHome, "CLASSLOADER_TEMP");
+          while (tempFolder.exists() && x <= 10) {
+              tempFolder = new File(Launch.minecraftHome, "CLASSLOADER_TEMP" + x++);
+          }
 
-         if (tempFolder.exists()) {
-            LogWrapper.info("DEBUG_SAVE enabled, but 10 temp directories already exist, clean them and try again.");
+          if (tempFolder.exists()) {
+             ExtendedLogger.log("DEBUG_SAVE enabled, but 10 temp directories already exist, clean them and try again.");
             tempFolder = null;
          } else {
-            LogWrapper.info("DEBUG_SAVE Enabled, saving all classes to \"%s\"", tempFolder.getAbsolutePath().replace('\\', '/'));
+            ExtendedLogger.log("DEBUG_SAVE Enabled, saving all classes to \"%s\"", tempFolder.getAbsolutePath().replace('\\', '/'));
             tempFolder.mkdirs();
          }
       }

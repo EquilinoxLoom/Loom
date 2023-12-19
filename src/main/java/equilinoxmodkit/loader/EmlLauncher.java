@@ -44,6 +44,8 @@ public class EmlLauncher implements ITweaker {
 
 			MixinBootstrap.init();
 			Mixins.addConfiguration("mixins.eml.json");
+
+			ModLoader.loadMods(loader);
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
