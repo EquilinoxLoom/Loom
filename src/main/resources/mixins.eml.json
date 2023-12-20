@@ -1,0 +1,29 @@
+{
+  "required": true,
+  "package": "equilinoxmodkit.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.7.10",
+  "mixins": [
+    "MixinGameMenuGui",
+    "MixinMenuPanelGui",
+    "clearlog.MixinDynamicMemoryManager",
+    "clearlog.MixinMutator",
+    "clearlog.MixinOpenGlError",
+    "clearlog.MixinSaveSlot",
+    "clearlog.MixinSoundLoader",
+    "clearlog.MixinStreamer",
+    "clearlog.MixinTextLoader",
+    "clearlog.MixinWorldLoader",
+    "loom.MixinBiome",
+    "loom.MixinBlueprintRepository",
+    "loom.MixinComponent",
+    "loom.MixinComponentType",
+    "loom.MixinFoodCompLoader",
+    "loom.MixinIconRenderer",
+    "loom.MixinInformationComponentLoader",
+    "loom.MixinMainApp",
+    "loom.MixinMyFile",
+    "loom.MixinTempEatAnimBlueprint",
+    "loom.MixinToolbar"
+  ]
+}
