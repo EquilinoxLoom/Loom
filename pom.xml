@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>loom</groupId>
-    <artifactId>Loom-Fabric</artifactId>
-    <version>0.1.0</version>
+    <artifactId>Loom</artifactId>
+    <version>0.1.3</version>
 
     <repositories>
         <repository>
