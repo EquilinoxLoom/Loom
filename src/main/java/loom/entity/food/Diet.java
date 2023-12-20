@@ -1,12 +1,13 @@
 package loom.entity.food;
 
-import equilinoxmodkit.util.EmkLogger;
 import loom.entity.Classifiable;
 import loom.entity.Entity;
 import loom.entity.weaver.EntityComponent;
 import loom.entity.weaver.EntityPrint;
 import loom.equilinox.ducktype.EatingAnimationReference;
 import loom.equilinox.ducktype.FoodTypeReference;
+import net.fabricmc.loader.impl.util.log.Log;
+import net.fabricmc.loader.impl.util.log.LogCategory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class Diet extends EntityComponent {
     public Diet addDietOption(Classifiable edible, FoodTypeReference type, EatingAnimationReference animation) {
         if (edible instanceof Edible) {
             if (!((Edible) edible).table().isEdibleAs(type)) {
-                EmkLogger.warn(((Edible) edible).name() + " cannot be eaten as " + type.name() + ".");
+                Log.warn(LogCategory.LOG, ((Edible) edible).name() + " cannot be eaten as " + type.name() + ".");
             }
         } else {
             animations.add(animation);

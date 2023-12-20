@@ -1,15 +1,16 @@
 package loom.entity.weaver;
 
-import equilinoxmodkit.loader.LaunchHelper;
-import equilinoxmodkit.util.EmkLogger;
+import net.fabricmc.loader.impl.util.log.Log;
+import net.fabricmc.loader.impl.util.log.LogCategory;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class ModelWriter {
     public static void writeEntityModel(File input, String output) {
-        File log = new File(new File(new File(LaunchHelper.getEquilinoxDir(), "entities"), "extracted"), output);
+        File log = Paths.get(".", "entities", "extracted", output).toFile();
         log.mkdirs();
 
         String[] model = readFile(input);
@@ -68,7 +69,7 @@ public class ModelWriter {
                     ));
                 }
             } catch (IOException e) {
-                EmkLogger.warn("Attempt to create file " + name + ".obj failed: " + e.getMessage());
+                Log.error(LogCategory.LOG, "Attempt to create file " + name + ".obj failed", e);
             }
 
             File mtl = createFile(log, name, ".mtl");
@@ -80,7 +81,7 @@ public class ModelWriter {
                     writer.write("Kd " + values(color) + "\n");
                 }
             } catch (IOException e) {
-                EmkLogger.warn("Attempt to create file " + name + ".mtl failed: " + e.getMessage());
+                Log.error(LogCategory.LOG, "Attempt to create file " + name + ".mtl failed", e);
             }
         }
     }

@@ -1,8 +1,9 @@
 package loom.fabric;
 
-import equilinoxmodkit.util.EmkLogger;
 import net.fabricmc.loader.impl.game.patch.GamePatch;
 import net.fabricmc.loader.impl.launch.FabricLauncher;
+import net.fabricmc.loader.impl.util.log.Log;
+import net.fabricmc.loader.impl.util.log.LogCategory;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -12,17 +13,15 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class LoomPatch extends GamePatch {
-    private static final int VAR_INDEX = 3;
-
     @Override
     public void process(FabricLauncher launcher, Function<String, ClassReader> classSource, Consumer<ClassNode> classEmitter) {
         String entrypoint = launcher.getEntrypoint();
-        EmkLogger.log("Entrypoint is " + entrypoint);
+        Log.debug(LogCategory.GAME_PATCH, "Entrypoint is " + entrypoint);
         ClassNode entrypointClazz = readClass(classSource.apply(entrypoint));
         if (entrypointClazz == null) {
             throw new LinkageError("Could not load entrypoint class " + entrypoint + "!");
         }
-        EmkLogger.log("Entrypoint class is " + entrypointClazz);
+        Log.debug(LogCategory.GAME_PATCH, "Entrypoint class is " + entrypointClazz);
 
         if (entrypoint.equals(EquilinoxGameProvider.ENTRY_POINT)) {
             MethodNode method = findMethod(entrypointClazz, init -> init.name.equals("init") && init.desc.equals("()V"));

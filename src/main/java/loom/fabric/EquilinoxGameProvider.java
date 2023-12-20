@@ -1,6 +1,5 @@
 package loom.fabric;
 
-import equilinoxmodkit.util.EmkLogger;
 import net.fabricmc.loader.impl.FormattedException;
 import net.fabricmc.loader.impl.game.GameProvider;
 import net.fabricmc.loader.impl.game.GameProviderHelper;
@@ -10,6 +9,8 @@ import net.fabricmc.loader.impl.metadata.BuiltinModMetadata;
 import net.fabricmc.loader.impl.metadata.ContactInformationImpl;
 import net.fabricmc.loader.impl.util.Arguments;
 import net.fabricmc.loader.impl.util.SystemProperties;
+import net.fabricmc.loader.impl.util.log.Log;
+import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.fabricmc.loader.impl.util.version.StringVersion;
 
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +25,7 @@ public class EquilinoxGameProvider implements GameProvider {
     public static final String ENTRY_POINT = "main.MainApp";
 
     private Arguments arguments;
+
     private Path gameJar;
 
     String entrypoint;
@@ -113,7 +115,7 @@ public class EquilinoxGameProvider implements GameProvider {
         GameProviderHelper.FindResult result = GameProviderHelper.findFirst(jarPaths, new HashMap<>(), true, entrypoint);
 
         if (result == null || result.path == null) {
-            EmkLogger.warn("Could not locate game. Looked at: \n" + gameLocations.stream()
+            Log.error(LogCategory.GAME_PROVIDER, "Could not locate game. Looked at: \n" + gameLocations.stream()
                     .map(path -> " - " + Paths.get(path).toAbsolutePath().normalize())
                     .collect(Collectors.joining("\n")));
             return false;
@@ -180,7 +182,7 @@ public class EquilinoxGameProvider implements GameProvider {
             arguments.put("gameDir", getLaunchDirectory(arguments).toAbsolutePath().normalize().toString());
         }
 
-        EmkLogger.log("Launch directory is " + Paths.get(arguments.get("gameDir")));
+        Log.debug(LogCategory.GAME_PROVIDER, "Launch directory is " + Paths.get(arguments.get("gameDir")));
     }
 
     private static Path getLaunchDirectory(Arguments arguments) {

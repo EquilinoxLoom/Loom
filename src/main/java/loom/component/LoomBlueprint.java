@@ -5,6 +5,7 @@ import breedingTrees.ReqInfo;
 import componentArchitecture.*;
 import instances.Entity;
 import loom.LoomMod;
+import loom.ParamRegistry;
 import loom.entity.Classifiable;
 import loom.entity.Specie;
 import loom.entity.weaver.EntityComponent;
@@ -44,7 +45,7 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
         Class<? extends EvolutionRequirement> evReq = ((EvolutionRequirement) component.evolutionRequirements.stream()
                 .filter(ev -> ev.check(component.requester))
                 .toArray()[0]).getClass();
-        final EvolutionRequirement req = (EvolutionRequirement) readRegistry(new LoomMod.ParamRegistry(evReq), reader);
+        final EvolutionRequirement req = (EvolutionRequirement) readRegistry(new ParamRegistry(evReq), reader);
         return new Requirement() {
             @Override
             public boolean check(Entity entity) {
@@ -65,7 +66,7 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
         };
     }
 
-    public static Object readRegistry(LoomMod.ParamRegistry registry, CSVReader reader, Constructor<?>... constructors) {
+    public static Object readRegistry(ParamRegistry registry, CSVReader reader, Constructor<?>... constructors) {
         LinkedHashMap<String, Object> params = new LinkedHashMap<>();
 
         registry.getParams().forEach((label, type) -> {
