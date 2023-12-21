@@ -20,6 +20,10 @@
             <id>lib</id>
             <url>file:///${pom.basedir}/libs</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <build>
