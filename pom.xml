@@ -82,12 +82,5 @@
             <artifactId>equilinox</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
-            <groupId>equilinox</groupId>
-            <artifactId>Equilinox</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/EquilinoxWindows.jar</systemPath>
-        </dependency>
     </dependencies>
 </project>
