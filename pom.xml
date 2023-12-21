@@ -16,6 +16,10 @@
             <id>legacy-fabric</id>
             <url>https://repo.legacyfabric.net/repository/legacyfabric/</url>
         </repository>
+        <repository>
+            <id>lib</id>
+            <url>file:///${project.basedir}/libs</url>
+        </repository>
     </repositories>
 
     <build>
