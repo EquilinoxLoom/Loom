@@ -19,7 +19,14 @@ public class Particles extends EntityComponent {
     public float x1, y1, z1, dirDev;
     public boolean direction = false;
 
-    public float x2, x3, y2, z2, durDev, scaleDev, speedDev, udSpeed = 0;
+    public final float x2;
+    public float x3;
+    public final float y2;
+    public final float z2;
+    public final float durDev;
+    public final float scaleDev;
+    public final float speedDev;
+    public float udSpeed = 0;
     public boolean rotation = false, xRotation = false;
 
     public Particles(@Nonnull SpawnPattern spawn, float particlesPerSecond, float speed, float gravity, float duration,

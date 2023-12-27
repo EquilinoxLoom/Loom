@@ -25,7 +25,7 @@ public class MixinMyFile {
             String[] _path = path.replaceAll("^.*" + MOD_POINTER, "").split(":");
             String name = _path[0], file = _path[1];
 
-            LoomMod mod = LOOMS.stream().filter(e -> e.getModInfo().id().equals(name)).toArray(LoomMod[]::new)[0];
+            LoomMod mod = LOOMS.stream().filter(e -> e.getInfo().id().equals(name)).toArray(LoomMod[]::new)[0];
             cir.setReturnValue(mod.getClass().getResourceAsStream(file));
         } else if (path.length() > 1000) {
             cir.setReturnValue(new ByteArrayInputStream(path.substring(1).getBytes(StandardCharsets.UTF_8)));

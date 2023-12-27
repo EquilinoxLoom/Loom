@@ -56,10 +56,6 @@ public abstract class AnimalEntity extends LivingEntity {
         components.put(VanillaComponent.BURROW, "");
     }
 
-    public void setDrops(Specie item) {
-        components.put(VanillaComponent.DROP, ";" + item.getId());
-    }
-
     public void setDiet(Diet diet) {
         diet.setEntity(this);
         components.put(VanillaComponent.EATING, diet.build());
@@ -81,9 +77,5 @@ public abstract class AnimalEntity extends LivingEntity {
 
     public void setInsectCatcher(float minCooldown, float maxCooldown) {
         components.put(VanillaComponent.FLINGING, ";" + minCooldown + ";;" + maxCooldown);
-    }
-
-    public void setContainerFiller() {
-        components.put(VanillaComponent.BEE, "");
     }
 }

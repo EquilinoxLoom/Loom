@@ -68,8 +68,7 @@ public class FoodTable extends EntityComponent {
     public FoodTable(Entity entity) {
         this.entity = entity;
 
-        if (entity instanceof FruitProducer) {
-            FruitProducer producer = (FruitProducer) entity;
+        if (entity instanceof FruitProducer producer) {
             addEdible(VanillaFoodType.FRUIT, producer.points());
         }
     }

@@ -1,11 +1,13 @@
 package loom.entity.life;
 
+import loom.entity.Specie;
 import loom.entity.Tooltip;
-import loom.entity.weaver.LoomEntity;
+import loom.entity.weaver.EquilinoxEntity;
+import loom.equilinox.vanilla.VanillaComponent;
 
 import javax.annotation.Nonnull;
 
-public abstract class LivingEntity extends LoomEntity implements Tooltip, Living {
+public abstract class LivingEntity extends EquilinoxEntity implements Tooltip, Living {
     private Death death;
     private int defense;
 
@@ -28,5 +30,9 @@ public abstract class LivingEntity extends LoomEntity implements Tooltip, Living
 
     public void setDeath(Death death) {
         this.death = death;
+    }
+
+    public void setDrops(Specie item) {
+        components.put(VanillaComponent.DROP, ";" + item.getId());
     }
 }

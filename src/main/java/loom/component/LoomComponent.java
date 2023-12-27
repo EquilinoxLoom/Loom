@@ -255,6 +255,11 @@ public abstract class LoomComponent extends Component implements ComponentRefere
         this.evolutionRequirements.add(req);
     }
 
+    //TODO
+    public String build() {
+        return null;
+    }
+
     public static class LoomParams extends ComponentParams {
         private final Map<Field, Object> fields;
 

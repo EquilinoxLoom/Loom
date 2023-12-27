@@ -215,36 +215,21 @@ public class ModelReader {
         return lines.toArray(new String[0]);
     }
 
-    private static String join(Object... os) {
-        return EntityPrint.print(";;", os);
-    }
-
-    private static final Map<Class<? extends Annotation>, VanillaComponent> ANNOTATIONS
-            = new HashMap<Class<? extends Annotation>, VanillaComponent>() {{
-        put(Projectile.class, PROJECTILE);
-        put(Flytrap.class, FLY_TRAP);
-        put(Floater.class, LILY);
-        put(Sunflower.class, SUN_FACER);
-        put(Stinger.class, STINGING);
-        put(TreeCharger.class, CHARGE);
-        put(Peacock.class, PEACOCK);
-        put(Named.class, NAME);
-        put(DenBuilder.class, BEAVER);
-        put(Panic.class, PANIC);
+    private static final Map<Class<? extends Annotation>, VanillaComponent> ANNOTATIONS = new HashMap<>() {{
+        put(Projectile.class, PROJECTILE); put(Flytrap.class, FLY_TRAP); put(Floater.class, LILY); put(Sunflower.class, SUN_FACER); put(Stinger.class, STINGING);
+        put(TreeCharger.class, CHARGE); put(Peacock.class, PEACOCK); put(Named.class, NAME); put(DenBuilder.class, BEAVER); put(Panic.class, PANIC);
     }};
 
     public static Map<PrintableComponent, String> readEntityComponents(Entity entity) {
         final Map<PrintableComponent, String> components = entity.getComponents();
 
-        if (entity instanceof BiomeSpreader) {
-            BiomeSpreader spreader = (BiomeSpreader) entity;
+        if (entity instanceof BiomeSpreader spreader)
             try {
                 components.put(SPREADER, Biome.valueOf(spreader.biome().name()).ordinal() + ";0.1;0.1;0.1;"
                         + spreader.strength() + ";" + spreader.distance());
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Biome " + spreader.biome().name() + " was not registered");
             }
-        }
         if (entity.getClass().isAnnotationPresent(Timeout.class))
             components.put(TIME_OUT, String.valueOf(entity.getClass().getAnnotation(Timeout.class).value()));
         if (entity.getMaterials() != null && !entity.getMaterials().isEmpty()) {
@@ -256,21 +241,16 @@ public class ModelReader {
                 }
                 map.put(color, price);
             });
-            components.put(MATERIAL, ";" + join(entity.getSecondNaturalColor() != null,
+            components.put(MATERIAL, ";" + EntityPrint.print(";;", entity.getSecondNaturalColor() != null,
                     EntityPrint.printArray(";", map.entrySet().toArray(new Map.Entry[0]), e -> {
                         Map.Entry<Color, Integer> entry = (Map.Entry<Color, Integer>) e;
                         return VanillaColor.isVanilla(entry.getKey()) + ";" + entry.getValue();
                     })
             ));
         }
-        if (entity instanceof Tooltip) {
-            Tooltip info = (Tooltip) entity;
-            components.put(INFO, join(LoomMod.MOD_POINTER + ";" + info.name(), info.description(), info.price(),
-                    info.dpPerMin(), info.range(), info.sound().toString().toLowerCase(Locale.ROOT)));
-        }
-        if (entity instanceof Living) {
-            Living life = (Living) entity;
-
+        if (entity instanceof Tooltip info) components.put(INFO, EntityPrint.print(";;", LoomMod.MOD_POINTER + ";" + info.name(),
+                info.description(), info.price(), info.dpPerMin(), info.range(), info.sound().toString().toLowerCase(Locale.ROOT)));
+        if (entity instanceof Living life) {
             EntityComponent print = new EntityComponent() {};
             float[] factors = life.populationFactors();
             print.addSub(life.population(), life.lifespan(), factors.length + (factors.length > 0 ? ";"
@@ -287,60 +267,56 @@ public class ModelReader {
             if (!life.dynamic()) print.addSub(life.subStages());
             components.put(GROWTH, print.build());
         }
-        if (entity instanceof FruitProducer) {
-            FruitProducer fruit = (FruitProducer) entity;
+        if (entity instanceof FruitProducer fruit) {
             components.put(FRUITER, ";" + fruit.modelIndex() + ";;" + fruit.stages()
                     + (fruit.time() != 5 ? ";;" + fruit.time() : ""));
-            if (fruit instanceof FruitFall) {
-                FruitFall fall = (FruitFall) fruit;
+            if (fruit instanceof FruitFall fall) {
                 components.put(FRUIT_FALL, ";" + EntityPrint.print(";;", fall.fruit().getId(),
                         0.012f / fall.fallChancePerHour(), fall.fruitsSpawnHeight(), fall.fruitsSpawnRadius()));
             }
         }
-        if (entity instanceof WoodProducer) {
-            WoodProducer wood = (WoodProducer) entity;
-            components.put(WOOD, ";" + wood.cuttingTime() + ";;" + wood.barkChance() + ";;" +
-                    wood.woodColour().getRed() + ";" + wood.woodColour().getGreen() + ";" + wood.woodColour().getBlue());
-        }
-        if (entity instanceof Builder) {
-            Builder builder = (Builder) entity;
+        if (entity instanceof WoodProducer wood) components.put(WOOD, ";" + wood.cuttingTime() + ";;"
+                + wood.barkChance() + ";;" + wood.woodColour().getRed() + ";" + wood.woodColour().getGreen() + ";" + wood.woodColour().getBlue());
+        if (entity instanceof Builder builder) {
             assert entity instanceof LivingEntity;
-            components.put(BUILDER, ";" + join(builder.structure().getId(), builder.points(),
+            components.put(BUILDER, ";" + EntityPrint.print(";;", builder.structure().getId(), builder.points(),
                     builder.structure() instanceof Entity
                             ? ((Entity) builder.structure()).hasComponent(PERCHER)
                             : builder.structure().getId() == VanillaSpecie.NEST.getId(),
                     builder.buildTime(), (builder.age() - 1) / ((LivingEntity) entity).stages()) +
                     (builder.buildingHour() != 0 ? ";;" + builder.buildTime() : ""));
+            if (entity instanceof ContainerFiller) components.put(BEE, "");
         }
-        if (entity instanceof Edible) components.put(FOOD, ((Edible) entity).table().build());
-        if (entity instanceof Holder) components.put(EQUIP, ";" + EntityPrint.printArray(";;",
-                ((Holder) entity).positions(), v -> v.x + ";" + v.y + ";" + v.z));
-        if (entity instanceof Fighter) {
-            Fighter fighter = (Fighter) entity;
-            components.put(FIGHT, ";" + join(fighter.attackDamage(), fighter.takesRevenge(), entity.hasComponent(BEE),
+        if (entity instanceof Edible edible) components.put(FOOD, edible.table().build());
+        if (entity instanceof Holder holder) components.put(EQUIP, ";" + EntityPrint.printArray(";;",
+                holder.positions(), v -> v.x + ";" + v.y + ";" + v.z));
+        if (entity instanceof Fighter fighter) {
+            components.put(FIGHT, ";" + EntityPrint.print(";;", fighter.attackDamage(), fighter.takesRevenge(), entity.hasComponent(BEE),
                     fighter.attackRange(), fighter.attackCooldown()));
-            if (entity instanceof Territorial) {
-                Territorial territorial = (Territorial) fighter;
-                components.put(HOSTILE, ";" + territorial.defendCooldown() + ";;" + territorial.enemy() + ";;"
-                        + (territorial.noticeable() ? 1 : 0));
+            if (entity instanceof Territorial territorial) components.put(HOSTILE, ";" + territorial.defendCooldown()
+                    + ";;" + territorial.enemy() + ";;" + (territorial.noticeable() ? 1 : 0));
+        }
+        if (entity instanceof Hunter) {
+            if (entity instanceof WalkingHunter hunter) {
+                components.put(HUNT, ";" + EntityPrint.print(";;", hunter.range(), EntityPrint.printArray(";;", hunter.preys(),
+                        Classifiable::getClassification), hunter.huntsYoung(), hunter.huntsOld()));
+            } else {
+                if (entity.goesUnderwater() && !entity.goesOverwater()) components.put(FISH_HUNT, "");
+                else if (entity.hasEggStage()) components.put(BIRD_HUNT, "");
             }
         }
-        if (entity instanceof Predator) {
-            Predator predator = (Predator) entity;
-            if (predator.preys() != null && predator.preys().length > 0) {
-                if (entity.goesUnderwater() && predator.preys()[0].equals(VanillaClassification.SMALL_FISH))
-                    components.put(FISH_HUNT, "");
-                else {
-                    if (entity.hasEggStage()) components.put(BIRD_HUNT, "");
-                    else components.put(HUNT, ";" + join(predator.range(), EntityPrint.printArray(";;", predator.preys(),
-                            Classifiable::getClassification), predator.huntsYoung(), predator.huntsOld()));
-                }
+        if (entity instanceof WalkingHunter predator) if (predator.preys() != null && predator.preys().length > 0) {
+            if (entity.goesUnderwater() && predator.preys()[0].equals(VanillaClassification.SMALL_FISH))
+                components.put(FISH_HUNT, "");
+            else {
+                if (entity.hasEggStage()) components.put(BIRD_HUNT, "");
+                else components.put(HUNT, ";" + EntityPrint.print(";;", predator.range(), EntityPrint.printArray(";;", predator.preys(),
+                        Classifiable::getClassification), predator.huntsYoung(), predator.huntsOld()));
             }
         }
 
         ANNOTATIONS.forEach((annotation, component) -> {
-            if (entity.getClass().isAnnotationPresent(annotation))
-                components.put(component, "");
+            if (entity.getClass().isAnnotationPresent(annotation)) components.put(component, "");
         });
         return components;
     }

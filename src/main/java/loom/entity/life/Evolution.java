@@ -5,7 +5,6 @@ import loom.entity.Specie;
 import loom.entity.weaver.EntityComponent;
 import loom.equilinox.ducktype.BiomeReference;
 import loom.equilinox.vanilla.VanillaColor;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -19,7 +18,7 @@ public class Evolution extends EntityComponent {
         this.points = breedPoints;
     }
 
-    public void addEatingRequirement(@NotNull Classifiable classification) {
+    public void addEatingRequirement(@Nonnull Classifiable classification) {
         add("EATING;" + classification);
     }
 
@@ -35,11 +34,11 @@ public class Evolution extends EntityComponent {
         add("LIFE", 1);
     }
 
-    public void addNearbySpecieRequirement(@NotNull Classifiable classification, int count) {
+    public void addNearbySpecieRequirement(@Nonnull Classifiable classification, int count) {
         addEnvironmentRequirement(0, classification.getClassification(), count);
     }
 
-    public void addBiomeRequirement(@NotNull BiomeReference biome, float targetPercentage) {
+    public void addBiomeRequirement(@Nonnull BiomeReference biome, float targetPercentage) {
         addEnvironmentRequirement(1, biome.name().toUpperCase(), targetPercentage);
     }
 
@@ -58,7 +57,7 @@ public class Evolution extends EntityComponent {
         addEnvironmentRequirement(4, biome, "");
     }
 
-    public void addNearbyColoredSpecieRequirement(@NotNull Classifiable classification, Color color) {
+    public void addNearbyColoredSpecieRequirement(@Nonnull Classifiable classification, Color color) {
         addEnvironmentRequirement(6, classification.getClassification(), VanillaColor.getClosestVanilla(color));
     }
 
@@ -73,10 +72,4 @@ public class Evolution extends EntityComponent {
     public void addSizeRequirement(float targetSize) {
         add("TRANSFORM;;" + targetSize);
     }
-
-    /*
-    public <T extends LoomComponent & ComponentEvolutionRequirement> void addCustomRequirement(T requirement) {
-        add(requirement.name() + ";" + requirement.evolutionRequirement().compile());
-    }
-     */
 }

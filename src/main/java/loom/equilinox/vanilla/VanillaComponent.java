@@ -5,6 +5,7 @@ import componentArchitecture.ComponentBundle;
 import componentArchitecture.ComponentType;
 import loom.component.PrintableComponent;
 import loom.entity.Entity;
+import loom.entity.Named;
 import loom.entity.Specie;
 import loom.entity.animal.*;
 import loom.entity.food.Diet;
@@ -16,7 +17,8 @@ import loom.entity.plant.*;
 import loom.entity.structure.Projectile;
 import loom.entity.structure.StructureEntity;
 import loom.entity.structure.Timeout;
-import loom.entity.weaver.LoomEntity;
+import loom.entity.system.Particles;
+import loom.entity.weaver.EquilinoxEntity;
 import loom.equilinox.ducktype.SoundReference;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -28,13 +30,13 @@ import java.util.Set;
 public enum VanillaComponent implements PrintableComponent {
     /**
      * Stores the size, position and rotation of the entity.
-     * <p><b>Implementation:</b> Extend {@link LoomEntity} class.</p>
+     * <p><b>Implementation:</b> Extend {@link EquilinoxEntity} class.</p>
      */
     TRANSFORM,
 
     /**
      * Stores the model data of the entity.
-     * <p><b>Implementation:</b> Extend {@link LoomEntity} class.</p>
+     * <p><b>Implementation:</b> Extend {@link EquilinoxEntity} class.</p>
      */
     MESH,
 
@@ -45,8 +47,8 @@ public enum VanillaComponent implements PrintableComponent {
     SPREADER,
 
     /**
-     * After the specified time, falls to the ground and starts burying itself in the ground, fading out.
-     * <p><b>Implementation:</b> Extend {@link Edible} interface and invoking {@link FoodTable#setFoodItem(float)}
+     * Falls to the ground and starts burying itself in the ground, fading out, at the specified time.
+     * <p><b>Implementation:</b> Extend {@link Edible} interface and invoke {@link FoodTable#setFoodItem(float)}
      * method in the {@link FoodTable} returned by {@link Edible#table()} function.</p>
      */
     DECAY,
@@ -69,8 +71,8 @@ public enum VanillaComponent implements PrintableComponent {
     /**
      * One of its colors can be changed in Genetic Modification UI, being the first material of its object file model.
      * <p><b>Implementation:</b> Make {@link Entity#getMaterials()} not return an empty or null map.
-     * For classes extending {@link LoomEntity} or one of its subclasses, this can be achieved by
-     * invoking {@link LoomEntity#addColor(int, Color)} at its constructor.</p>
+     * For classes extending {@link EquilinoxEntity} or one of its subclasses, this can be achieved by
+     * invoking {@link EquilinoxEntity#addColor(int, Color)} at its constructor.</p>
      */
     MATERIAL,
 
@@ -125,8 +127,8 @@ public enum VanillaComponent implements PrintableComponent {
 
     /**
      * Plays a sound in a loop.
-     * <p><b>Implementation:</b> Extend {@link LoomEntity} and invoke
-     * {@link LoomEntity#setLoopingSounder(float, float, SoundReference)} method at its constructor.</p>
+     * <p><b>Implementation:</b> Extend {@link EquilinoxEntity} and invoke
+     * {@link EquilinoxEntity#setLoopingSounder(float, float, SoundReference)} method at its constructor.</p>
      */
     SOUND_LOOPER(TRANSFORM),
 
@@ -211,10 +213,9 @@ public enum VanillaComponent implements PrintableComponent {
     EATING(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, AI),
 
     /**
-     * Hunts small fish.
-     * <p><b>Implementation:</b> Extend {@link Predator} interface.</p>
-     * <p>The component is automatically added by the {@link Predator} interface if {@link Predator#preys()}
-     * first element is {@link VanillaClassification#SMALL_FISH} and if it goes overwater.</p>
+     * Hunts {@link VanillaClassification#SMALL_FISH small fish}.
+     * <p><b>Implementation:</b> Extend {@link Hunter} interface.
+     * The component is automatically added if the entity only goes underwater and does not extend {@link WalkingHunter}.</p>
      */
     FISH_HUNT(TRANSFORM, MESH, LIFE, GROWTH, INFO),
     HEALER,
@@ -257,31 +258,109 @@ public enum VanillaComponent implements PrintableComponent {
     PERCH(TRANSFORM, LIFE, INFO),
 
     /**
-     * Rests in perch slots of a {@link VanillaComponent#PERCH}.
+     * Stores whether the entity is perching in a {@link VanillaComponent#PERCH} slot.
      * <p><b>Implementation:</b> Extend {@link AnimalEntity} class and invoke {@link AnimalEntity#setPerches(boolean)}.</p>
      */
     PERCHER,
 
     /**
-     * Rests in perch slots of a {@link VanillaComponent#PERCH}.
-     * <p><b>Implementation:</b> Extend {@link AnimalEntity} class and invoke {@link AnimalEntity#setPerches(boolean)}.</p>
+     * Can pick objects up.
+     * <p><b>Implementation:</b> Extend {@link Holder} interface.</p>
      */
     EQUIP(TRANSFORM, LIFE, INFO),
+
+    /**
+     * Cuts trees, picks up its twigs and builds a den when adult.
+     * <p><b>Implementation:</b> Annotate with {@link DenBuilder}.</p>
+     */
     BEAVER(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, EQUIP, AI),
+
+    /**
+     * Emits particles.
+     * <p><b>Implementation:</b> Extend {@link EquilinoxEntity} and invoke {@link EquilinoxEntity#setParticles(Particles, float, int[], boolean)}.</p>
+     */
     PARTICLES(TRANSFORM, MESH),
+
+    /**
+     * Hunts {@link VanillaClassification#SMALL_HERBIVORE small herbivores} while flying.
+     * <p><b>Implementation:</b> Extend {@link Hunter} interface.
+     * The component is automatically added if the entity has an egg stage and does not extend {@link WalkingHunter}.</p>
+     */
     BIRD_HUNT(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, AI),
+
+    /**
+     * Randomly spits on nearby animals.
+     * <p><b>Implementation:</b> Extend {@link AnimalEntity} class and invoke {@link AnimalEntity#setSpits(float, float, float)}.</p>
+     */
     SPITTING(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, AI),
-    BEE(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT),
+
+    /**
+     * Fills specified nearby containers.
+     * <p><b>Implementation:</b> Extend {@link ContainerFiller} interface.</p>
+     * <p>The component is called bee because its only implementation in vanilla game is the bee, but it has nothing to do with bees.</p>
+     * @see VanillaComponent#HIVE
+     */
+    BEE(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, BUILDER),
     FLINGING(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, AI),
+
+    /**
+     * Is randomly named.
+     * <p><b>Implementation:</b> Annotate with {@link Named}.</p>
+     */
     NAME,
+
+    /**
+     * Stores sound emission data.
+     * <p><b>Implementation:</b> Extend {@link EquilinoxEntity} class and invoke {@link EquilinoxEntity#setRandomSounder(float, float, int, SoundReference...)}.</p>
+     */
     SOUND(TRANSFORM),
+
+    /**
+     * Randomly emits a sound.
+     * <p><b>Implementation:</b> Extend {@link EquilinoxEntity} class and invoke {@link EquilinoxEntity#setRandomSounder(float, float, int, SoundReference...)}.</p>
+     */
     RANDOM_SOUNDER(TRANSFORM, SOUND),
+
+    /**
+     * Stores fight data.
+     * <p><b>Implementation:</b> Extend {@link Fighter} interface.</p>
+     */
     FIGHT(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, AI),
+
+    /**
+     * Hunts specified preys on land.
+     * <p><b>Implementation:</b> Extend {@link WalkingHunter} interface.</p>
+     */
     HUNT(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, EQUIP, AI, FIGHT),
+
+    /**
+     * Sleeps.
+     * <p><b>Implementation:</b> Extend {@link AnimalEntity} class and invoke {@link AnimalEntity#setSleeps(float, float, float, float)}.</p>
+     */
     SLEEP(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, AI),
+
+    /**
+     * Flees when is attacked or is being hunted.
+     * <p><b>Implementation:</b> Extend {@link AnimalEntity} class and invoke {@link AnimalEntity#setFlees(float)}.</p>
+     */
     FLEE(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, AI),
+
+    /**
+     * Creates burrows that can serve as hide spot for it.
+     * <p><b>Implementation:</b> Extend {@link AnimalEntity} and invoke {@link AnimalEntity#setHoleHides(float)} .</p>
+     */
     BURROW(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, AI, FLEE),
+
+    /**
+     * Drops an entity when killed.
+     * <p><b>Implementation:</b> Extend {@link LivingEntity} and invoke {@link LivingEntity#setDrops}.</p>
+     */
     DROP,
+
+    /**
+     * Attacks nearby entities.
+     * <p><b>Implementation:</b> Extend {@link Territorial} interface.</p>
+     */
     HOSTILE(TRANSFORM, MESH, LIFE, GROWTH, INFO, MOVEMENT, EQUIP, AI, FIGHT);
 
     /**

@@ -221,9 +221,7 @@ public enum VanillaSpecie implements Specie {
     /**
      * Represents a cloud entity, belonging to the CLOUD super-order.
      */
-    private static class Cloud implements Specie {
-        private final int c;
-
+    private record Cloud(int c) implements Specie {
         private Cloud(int c) {
             this.c = c;
             ids.add(c);

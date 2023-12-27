@@ -18,7 +18,7 @@ public class Diet extends EntityComponent {
     public final int hunger;
     public final float hungerHour, radius;
 
-    List<EatingAnimationReference> animations = new ArrayList<>();
+    final List<EatingAnimationReference> animations = new ArrayList<>();
 
     private boolean runs = false;
 

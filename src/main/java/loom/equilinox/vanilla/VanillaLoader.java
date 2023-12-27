@@ -57,11 +57,9 @@ public enum VanillaLoader {
         return new PointSpawn();
     }, Particles.SpawnPattern.class);
 
-    private static final Map<Class<?>, Function<CSVReader, ?>> FUNCTIONS =
-            new HashMap<Class<?>, Function<CSVReader, ?>>() {{
-                putAll(Arrays.stream(VanillaLoader.values())
-                        .collect(Collectors.toMap(VanillaLoader::getClazz, VanillaLoader::getFunction)));
-            }};
+    private static final Map<Class<?>, Function<CSVReader, ?>> FUNCTIONS = new HashMap<>() {{
+        putAll(Arrays.stream(VanillaLoader.values()).collect(Collectors.toMap(VanillaLoader::getClazz, VanillaLoader::getFunction)));
+    }};
 
     private final Function<CSVReader, ?> function;
     private final Class<?> clazz;

@@ -29,7 +29,7 @@ public abstract class EntityComponent {
         String build;
 
         if (print.isEmpty()) build = "0";
-        else if (print.size() == 1) build = getDelimiter() + print.get(0);
+        else if (print.size() == 1) build = getDelimiter() + print.getFirst();
         else build = EntityPrint.printArray(getDelimiter(), print.toArray(new String[0]), s -> s);
 
         print.clear();

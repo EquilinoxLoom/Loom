@@ -19,12 +19,6 @@ public abstract class PlantEntity extends LivingEntity {
         super(name, Death.newFadeDeath(0.5f));
     }
 
-    public void setParticles(Particles particle, float range, int[] stages, boolean usesPlantColor) {
-        this.components.put(VanillaComponent.PARTICLES, EntityPrint.print(";;", particle.build(), range,
-                stages.length + (stages.length > 0 ? Arrays.stream(stages).boxed().map(String::valueOf)
-                        .collect(Collectors.joining(";")) : ""), usesPlantColor));
-    }
-
     public final boolean dynamic() {
         return false;
     }

@@ -81,7 +81,7 @@ public class LoomBlueprint extends ComponentBlueprint implements ComponentLoader
         });
 
         for (Constructor<?> constructor : Arrays.stream(constructors)
-                .filter(constructor -> constructor.getParameterCount() == params.size()).collect(Collectors.toList())) {
+                .filter(constructor -> constructor.getParameterCount() == params.size()).toList()) {
             try {
                 constructor.setAccessible(true);
                 return constructor.newInstance(params.values().toArray());

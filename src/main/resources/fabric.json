@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 0.1,
+  "id": "loom-api",
+  "version": "${version}",
+  "name": "Loom API",
+  "description": "",
+  "authors": [
+    "Sandáliaball"
+  ],
+  "contact": {
+    "homepage": "https://github.com/EquilinoxLoom/Loom-API",
+    "discord": "sandaliaball"
+  },
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "loom.LoomMod"
+    ]
+  },
+  "mixins": [
+    "mixins.loom.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.13.3",
+    "equilinox": "1.*"
+  }
+}

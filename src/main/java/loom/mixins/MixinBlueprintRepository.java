@@ -25,14 +25,14 @@ import java.util.Map;
 
 @Mixin(value = BlueprintRepository.class, remap = false)
 public abstract class MixinBlueprintRepository {
-    @Shadow private static Map<Integer, Blueprint> blueprints = new HashMap<>();
+    @Shadow private static final Map<Integer, Blueprint> blueprints = new HashMap<>();
 
     @Inject(method = "loadAllBlueprints", at = @At(value = "TAIL"))
     private static void loadAllCustom(boolean backgroundLoad, CallbackInfo ci) {
         LoomMod.LOOMS.forEach(mod -> {
             Map<Integer, Entity> entities = mod.getEntities();
             if (entities.isEmpty()) return;
-            Log.log(LogLevel.INFO, LogCategory.LOG, mod.getModInfo().name() + " - loading entities");
+            Log.log(LogLevel.INFO, LogCategory.LOG, mod.getInfo().name() + " - loading entities");
             entities.forEach((id, entity) -> {
                 String build = entity.build();
                 File log = Paths.get("/entities").toFile();
@@ -43,7 +43,7 @@ public abstract class MixinBlueprintRepository {
                 } catch (IOException e) {
                     Log.warn(LogCategory.LOG, "Attempt to create file " + file.getName() + " failed: " + e.getMessage());
                 }
-                Log.log(LogLevel.INFO, LogCategory.LOG, mod.getModInfo().name() + " - loading " + entity.getClass().getSimpleName() + ".class");
+                Log.log(LogLevel.INFO, LogCategory.LOG, mod.getInfo().name() + " - loading " + entity.getClass().getSimpleName() + ".class");
                 blueprints.put(id, Blueprint.load(id, new MyFile(build), backgroundLoad));
             });
         });

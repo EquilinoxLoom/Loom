@@ -96,14 +96,18 @@ public class EntityPrint {
      * In particular, an {@code IOException} may be thrown if the output stream has been closed.
      */
     public static <T> boolean writeBinaryType(BinaryWriter writer, T value) throws IOException {
-        if (value instanceof Integer) writer.writeInt((Integer) value);
-        else if (value instanceof Float) writer.writeFloat((Float) value);
-        else if (value instanceof Long) writer.writeLong((Long) value);
-        else if (value instanceof Short) writer.writeShort((Short) value);
-        else if (value instanceof Vector3f) writer.writeVector((Vector3f) value);
-        else if (value instanceof Boolean) writer.writeBoolean((Boolean) value);
-        else if (value instanceof String) writer.writeString((String) value);
-        else return false;
+        switch (value) {
+            case Integer i -> writer.writeInt(i);
+            case Float v -> writer.writeFloat(v);
+            case Long l -> writer.writeLong(l);
+            case Short i -> writer.writeShort(i);
+            case Vector3f vector3f -> writer.writeVector(vector3f);
+            case Boolean b -> writer.writeBoolean(b);
+            case String s -> writer.writeString(s);
+            case null, default -> {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -116,7 +120,7 @@ public class EntityPrint {
      * @throws Exception If class is not supported by the reader.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T readBinaryType(BinaryReader reader, Class<T> clazz) throws Exception {
+    public static <T> T readBinaryType(BinaryReader reader, T clazz) throws Exception {
         if (clazz.equals(Integer.class)) return (T) Integer.valueOf(reader.readInt());
         else if (clazz.equals(Float.class)) return (T) Float.valueOf(reader.readFloat());
         else if (clazz.equals(Vector3f.class)) return (T) reader.readVector();

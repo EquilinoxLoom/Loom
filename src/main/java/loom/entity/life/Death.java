@@ -8,7 +8,7 @@ import loom.entity.weaver.EntityPrint;
 //TODO SUPPORT CUSTOM DEATH
 @SuppressWarnings("unused")
 public class Death extends EntityComponent {
-    String name;
+    final String name;
 
     protected Death(String name, Object... args) {
         this.name = name;
